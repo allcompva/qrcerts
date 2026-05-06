@@ -1,0 +1,32 @@
+# Docker Compose para pruebas con base de datos Somee (producción anterior)
+# Uso: docker compose -f docker-compose.test.yml up -d
+
+services:
+  qrcerts-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qrcerts-app-test
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ConnectionStrings__DefaultConnection=workstation id=campusDN.mssql.somee.com;packet size=4096;user id=capacitacionit_SQLLogin_1;pwd=4u8wmrqi55;data source=campusDN.mssql.somee.com;persist security info=False;initial catalog=campusDN;TrustServerCertificate=True
+      - Jwt__Key=SuperSecretKeyForQRCertsProduction2024!MustBeLongEnough
+      - SOFFICE_PATH=/usr/bin/soffice
+    ports:
+      - "8089:80"
+    volumes:
+      - uploads_test:/app/wwwroot/uploads
+      - logs_test:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: curl -f http://localhost/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  uploads_test:
+    driver: local
+  logs_test:
+    driver: local

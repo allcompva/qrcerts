@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRCerts — Plataforma de Certificados Digitales</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;.
+    color: #e2e8f0;
+    line-height: 1.6;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    text-align: center;
+    padding: 80px 20px 50px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(168,85,247,0.06) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #60a5fa;
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .hero h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f8fafc, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 40px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #3b82f6;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ===== TABS ===== */
+  .tabs-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+  .tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #0f172a;
+    padding: 20px 0;
+  }
+  .tab-btn {
+    padding: 14px 32px;
+    border: 1px solid #334155;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn:hover {
+    border-color: #3b82f6;
+    color: #e2e8f0;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #3b82f6;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+  }
+  .tab-btn .tab-icon { margin-right: 8px; font-size: 1.1rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .section-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+  }
+  .section-header p {
+    color: #64748b;
+    font-size: 1rem;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+
+  /* ===== FEATURE CARDS ===== */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+  .feature-card {
+    background: linear-gradient(145deg, #1e293b, #1a2332);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    border-color: #475569;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .feature-card.blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .feature-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .feature-card.emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .feature-card.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .feature-card.rose::before { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+  .feature-card.cyan::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  .blue .card-icon { background: rgba(59,130,246,0.15); }
+  .purple .card-icon { background: rgba(139,92,246,0.15); }
+  .emerald .card-icon { background: rgba(16,185,129,0.15); }
+  .amber .card-icon { background: rgba(245,158,11,0.15); }
+  .rose .card-icon { background: rgba(244,63,94,0.15); }
+  .cyan .card-icon { background: rgba(6,182,212,0.15); }
+
+  .feature-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 10px;
+  }
+  .feature-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  /* ===== FLOW ===== */
+  .flow {
+    margin-bottom: 64px;
+  }
+  .flow h3 {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #f1f5f9;
+    margin-bottom: 32px;
+    font-weight: 600;
+  }
+  .flow-steps {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .flow-step {
+    text-align: center;
+    flex: 0 0 160px;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 24px;
+    color: #475569;
+    font-size: 1.3rem;
+  }
+  .step-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(59,130,246,0.12);
+    border: 2px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 1.3rem;
+  }
+  .step-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ===== QUOTA DEMO ===== */
+  .quota-demo {
+    margin-bottom: 48px;
+  }
+  .quota-demo h3 {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #f1f5f9;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  .quota-chips {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .quota-chip {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quota-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .chip-green { background: #e8f5e9; color: #2e7d32; }
+  .chip-green .dot { background: #2e7d32; }
+  .chip-yellow { background: #fff8e1; color: #f57f17; }
+  .chip-yellow .dot { background: #f57f17; }
+  .chip-red { background: #ffebee; color: #c62828; }
+  .chip-red .dot { background: #c62828; }
+  .quota-legend {
+    text-align: center;
+    margin-top: 16px;
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  /* ===== HIGHLIGHT BOX ===== */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.05));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .highlight-box h3 {
+    color: #60a5fa;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .highlight-box p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid #1e293b;
+    color: #475569;
+    font-size: 0.85rem;
+  }
+  footer a {
+    color: #3b82f6;
+    text-decoration: none;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .hero-stats { gap: 24px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .flow-step { flex: 0 0 120px; }
+    .flow-step:not(:last-child)::after { display: none; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-badge">PLATAFORMA DE CERTIFICACIÓN DIGITAL</div>
+  <h1>QRCerts</h1>
+  <p>Generá, gestioná y verificá certificados digitales con código QR. Seguro, rápido y verificable al instante.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">QR</div>
+      <div class="stat-label">Verificación instantánea</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">DOCX</div>
+      <div class="stat-label">Plantillas personalizadas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">PDF</div>
+      <div class="stat-label">Generación automática</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">API</div>
+      <div class="stat-label">Integración Moodle</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TABS ============ -->
+<div class="tabs-container">
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('empresa')">
+      <span class="tab-icon">🏢</span> Panel Empresa
+    </button>
+    <button class="tab-btn" onclick="switchTab('admin')">
+      <span class="tab-icon">⚙️</span> Panel Administrador
+    </button>
+  </nav>
+
+  <!-- ==================== TAB EMPRESA ==================== -->
+  <div id="tab-empresa" class="tab-content active">
+
+    <div class="section-header">
+      <h2>Panel de la Empresa</h2>
+      <p>Todo lo que una organización necesita para gestionar sus cursos, alumnos y certificados digitales</p>
+    </div>
+
+    <!-- FLUJO PRINCIPAL -->
+    <div class="flow">
+      <h3>Flujo de trabajo</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-circle">📄</div>
+          <div class="step-label">Subir<br>plantilla</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">📚</div>
+          <div class="step-label">Crear<br>curso</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">👥</div>
+          <div class="step-label">Cargar<br>alumnos</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">🎓</div>
+          <div class="step-label">Emitir<br>certificados</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">📱</div>
+          <div class="step-label">Verificar<br>con QR</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES EMPRESA -->
+    <div class="features-grid">
+
+      <div class="feature-card blue">
+        <div class="card-icon">📄</div>
+        <h3>Plantillas Personalizadas</h3>
+        <p>Subí tu documento Word (.docx) con variables como <code>{{NOMBRE}}</code>, <code>{{RUT}}</code>, <code>{{QR}}</code>. El sistema detecta las variables automáticamente y las clasifica en datos del curso y datos del alumno.</p>
+      </div>
+
+      <div class="feature-card purple">
+        <div class="card-icon">📚</div>
+        <h3>Gestión de Cursos</h3>
+        <p>Creá cursos asociados a plantillas, definí el nombre del certificado, tipo, footers y variables de curso. <strong>Modificá cualquier dato en cualquier momento</strong> — sin bloqueos ni restricciones.</p>
+      </div>
+
+      <div class="feature-card emerald">
+        <div class="card-icon">👥</div>
+        <h3>Importación de Alumnos</h3>
+        <p>Importá alumnos desde <strong>Excel</strong> o <strong>Moodle</strong>, o agregalos manualmente. Si el alumno ya existe se actualizan sus datos, si no existe se crea. Sin duplicados, siempre consistente.</p>
+      </div>
+
+      <div class="feature-card amber">
+        <div class="card-icon">🎓</div>
+        <h3>Emisión de Certificados</h3>
+        <p>Generá certificados individuales o en lote. El sistema reemplaza las variables en la plantilla Word, inserta el código QR y convierte a PDF automáticamente. Descarga individual o ZIP.</p>
+      </div>
+
+      <div class="feature-card rose">
+        <div class="card-icon">🔄</div>
+        <h3>Corrección y Re-emisión</h3>
+        <p>¿Necesitás corregir un certificado? Eliminalo y volvé a emitirlo. El nuevo certificado toma los datos vigentes. Los certificados ya emitidos <strong>nunca se alteran retroactivamente</strong>.</p>
+      </div>
+
+      <div class="feature-card cyan">
+        <div class="card-icon">🔗</div>
+        <h3>Integración Moodle</h3>
+        <p>Conectá tu instancia de Moodle, importá cursos y alumnos con sus datos. Mapeá campos de Moodle a las variables de tu plantilla para generar certificados automáticamente.</p>
+      </div>
+    </div>
+
+    <!-- VERIFICACION -->
+    <div class="highlight-box">
+      <h3>📱 Verificación Pública Instantánea</h3>
+      <p>Cualquier persona puede escanear el código QR del certificado para verificar su autenticidad al instante.<br>
+      Sin login, sin registro — solo escanear y verificar.</p>
+    </div>
+
+    <!-- QUOTA INDICATOR -->
+    <div class="quota-demo">
+      <h3>Indicador de Cuota en la Barra de Navegación</h3>
+      <div class="quota-chips">
+        <div class="quota-chip chip-green">
+          <span class="dot"></span> 847 cert. — 45d
+        </div>
+        <div class="quota-chip chip-yellow">
+          <span class="dot"></span> 120 cert. — 5d
+        </div>
+        <div class="quota-chip chip-red">
+          <span class="dot"></span> 12 cert. — 2d
+        </div>
+      </div>
+      <p class="quota-legend">
+        Verde: holgura suficiente &nbsp;|&nbsp; Amarillo: atención requerida &nbsp;|&nbsp; Rojo: acción urgente
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB ADMIN ==================== -->
+  <div id="tab-admin" class="tab-content">
+
+    <div class="section-header">
+      <h2>Panel del Administrador</h2>
+      <p>Control total sobre empresas, usuarios y el modelo comercial de cuotas de certificados</p>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card blue">
+        <div class="card-icon">🏢</div>
+        <h3>Gestión de Empresas (OTECs)</h3>
+        <p>Creá y administrá las empresas clientes. Cada empresa opera de forma aislada con sus propios cursos, alumnos y certificados. Definí nombre, slug único y estado activo/inactivo.</p>
+      </div>
+
+      <div class="feature-card purple">
+        <div class="card-icon">👤</div>
+        <h3>Gestión de Usuarios</h3>
+        <p>Creá usuarios para cada empresa con credenciales propias. Cada usuario opera exclusivamente dentro de su organización asignada, con acceso limitado a los datos de su empresa.</p>
+      </div>
+
+      <div class="feature-card emerald">
+        <div class="card-icon">💰</div>
+        <h3>Modelo de Cuotas</h3>
+        <p>Activá o desactivá el sistema de cuotas por empresa con un simple switch. Si está <strong>desactivado</strong>, la empresa emite sin límite. Si está <strong>activado</strong>, solo puede emitir mientras tenga saldo.</p>
+      </div>
+
+      <div class="feature-card amber">
+        <div class="card-icon">📋</div>
+        <h3>Órdenes de Compra</h3>
+        <p>Cargá órdenes con dos valores: <strong>cantidad de certificados</strong> y <strong>fecha de caducidad</strong>. Cada nueva orden reemplaza a la anterior automáticamente. Simple, sin complicaciones.</p>
+      </div>
+
+      <div class="feature-card rose">
+        <div class="card-icon">📊</div>
+        <h3>Auditoría Completa</h3>
+        <p>Registro detallado de cada orden creada, reemplazada o consumida. Historial completo de cuántos certificados se emitieron, cuándo y bajo qué orden. Todo trazable.</p>
+      </div>
+
+      <div class="feature-card cyan">
+        <div class="card-icon">🔗</div>
+        <h3>Habilitación Moodle</h3>
+        <p>Controlá qué empresas tienen acceso a la integración con Moodle. La empresa solo ve la opción en su menú si el administrador la habilitó previamente.</p>
+      </div>
+    </div>
+
+    <!-- REGLAS DE CUOTA -->
+    <div class="flow">
+      <h3>Ciclo de vida de una orden de compra</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-circle">📝</div>
+          <div class="step-label">Admin crea<br>orden</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">✅</div>
+          <div class="step-label">Empresa<br>emite</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">📉</div>
+          <div class="step-label">Saldo se<br>consume</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">🔄</div>
+          <div class="step-label">Nueva orden<br>reemplaza</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-circle">📁</div>
+          <div class="step-label">Anterior va<br>al historial</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h3>💡 Reglas del Sistema de Cuotas</h3>
+      <p>
+        La empresa agota su saldo cuando se acaba la <strong>cantidad</strong> o vence la <strong>fecha</strong> — lo que ocurra primero.<br>
+        Tanto certificados nuevos como re-emisiones (borrar y volver a crear) consumen cuota.<br>
+        Las órdenes no se editan ni cancelan. Una nueva siempre reemplaza a la anterior.
+      </p>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="quota-demo">
+      <h3>Sistema de Alertas para la Empresa</h3>
+      <div class="quota-chips">
+        <div class="quota-chip chip-green">
+          <span class="dot"></span> +10 días y &lt;50% usado
+        </div>
+        <div class="quota-chip chip-yellow">
+          <span class="dot"></span> &lt;7 días o &gt;70% usado
+        </div>
+        <div class="quota-chip chip-red">
+          <span class="dot"></span> ≤3 días o ≥90% usado
+        </div>
+      </div>
+      <p class="quota-legend">
+        La empresa ve este indicador en su barra de navegación en todo momento
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>QRCerts Platform — <a href="https://certificadosqr.store" target="_blank">certificadosqr.store</a></p>
+</footer>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tabs-nav').offsetTop - 20, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

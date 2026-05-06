@@ -1,0 +1,86 @@
+=====================================
+QRCERTS - RUTAS DEL PROYECTO
+=====================================
+
+MONOREPO: C:\DEV\DN\QRCerts (todo unificado)
+
+  BACKEND  (.NET API)        : C:\DEV\DN\QRCerts\QRCerts.Api
+  FRONTEND (React/Vite)      : C:\DEV\DN\QRCerts\qrcerts-frontend
+  SQL scripts                : C:\DEV\DN\QRCerts\SQL
+  Docker (compose+Dockerfile): C:\DEV\DN\QRCerts
+
+PRODUCCION (servidor remoto):
+  root@149.50.148.247:/root/qrcerts
+  Puerto SSH: 5022
+  URL: https://certificadosqr.store
+
+=====================================
+DOCKER PRODUCCION - CONFIGURACION
+=====================================
+
+1. URL BASE FRONTEND -> API:
+   Archivo: src/qrcerts-frontend/.env.production
+   Valor: VITE_API_BASE_URL=/
+
+2. CARPETA PLANTILLAS .DOCX:
+   En servidor: /root/qrcerts/uploads/docx/
+   En contenedor: /app/wwwroot/uploads/docx/
+
+3. CADENA DE CONEXION API -> DB:
+   Archivo: src/QRCerts.Api/appsettings.json
+   Valor: Server=172.18.0.2,1433;Database=QRCerts;...
+
+4. URL QR (validación certificados):
+   Archivo: QRCerts.Api/Controllers/UploadController.cs
+   Valor: https://certificadosqr.store/#/validar?data={qrData}
+
+=====================================
+⚠️ REGLAS CRITICAS DE PRODUCCION
+=====================================
+
+1. NO BORRAR ARCHIVOS .DOCX - Son plantillas de clientes
+2. NO TOCAR LA BASE DE DATOS QRCerts - Datos reales de clientes
+3. Al reconstruir Docker - No pisar ni destruir datos
+
+=====================================
+ESQUEMA DE DEPLOY A PRODUCCION
+=====================================
+
+PASO 1: COMPILAR FRONTEND (local)
+---------------------------------
+cd C:\DEV\DN\QRCerts\qrcerts-frontend
+npm run build
+
+PASO 2: SUBIR FRONTEND A PRODUCCION
+------------------------------------
+cd C:\DEV\DN\QRCerts\qrcerts-frontend
+tar -cvf - dist | ssh -p5022 root@149.50.148.247 "cd /root/qrcerts/src/qrcerts-frontend && rm -rf dist && tar xvf -"
+
+PASO 3: SUBIR BACKEND A PRODUCCION (sin .vs, bin, obj)
+-------------------------------------------------------
+cd C:\DEV\DN\QRCerts
+tar --exclude='.vs' --exclude='bin' --exclude='obj' -cvf - QRCerts.Api | ssh -p5022 root@149.50.148.247 "cd /root/qrcerts/src && tar xvf -"
+
+PASO 4: RECONSTRUIR DOCKER (solo app, sin tocar SQL)
+-----------------------------------------------------
+ssh -p5022 root@149.50.148.247 "cd /root/qrcerts && docker compose up -d --build --no-deps qrcerts-app"
+
+PASO 5: VERIFICAR
+-----------------
+ssh -p5022 root@149.50.148.247 "docker exec qrcerts-app cat /app/appsettings.json | grep Server"
+ssh -p5022 root@149.50.148.247 "curl -s http://localhost:8080/health"
+
+=====================================
+COMANDOS UTILES
+=====================================
+
+Ver logs de la app:
+ssh -p5022 root@149.50.148.247 "docker logs qrcerts-app --tail 50"
+
+Ver estado de contenedores:
+ssh -p5022 root@149.50.148.247 "docker ps"
+
+Reiniciar solo la app (sin rebuild):
+ssh -p5022 root@149.50.148.247 "docker restart qrcerts-app"
+
+=====================================

@@ -1,0 +1,52 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+
+# NuGet
+*.nupkg
+**/packages/*
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# MSBuild
+*.binlog
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Application specific
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep
+
+# Temp/build artifacts
+*.tar
+*.gz
+nul
+lib/
+
+# Publish profiles with secrets
+Properties/PublishProfiles/*.user

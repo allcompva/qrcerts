@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad — QRCerts</title>
+<style>
+  body{font-family:'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;color:#333;line-height:1.8}
+  h1{color:#0f766e;border-bottom:2px solid #0f766e;padding-bottom:12px}
+  h2{color:#0f766e;margin-top:32px}
+  p,li{font-size:0.95rem}
+  .updated{color:#666;font-size:0.85rem;margin-bottom:32px}
+</style>
+</head>
+<body>
+<h1>Política de Privacidad</h1>
+<p class="updated">Última actualización: abril 2026</p>
+
+<h2>1. Responsable del tratamiento</h2>
+<p>QRCerts ("nosotros", "la plataforma") es una plataforma de generación de certificados digitales verificables operada desde certificadosqr.store.</p>
+
+<h2>2. Datos que recopilamos</h2>
+<p>Recopilamos únicamente los datos necesarios para la prestación del servicio:</p>
+<ul>
+  <li><strong>Datos de cuenta:</strong> nombre de usuario y contraseña (cifrada) para acceder a la plataforma.</li>
+  <li><strong>Datos de alumnos:</strong> nombre, apellido e identificación (RUT u otro) proporcionados por la organización cliente para la emisión de certificados.</li>
+  <li><strong>Datos de cursos:</strong> nombre del curso, fechas y contenido del certificado.</li>
+  <li><strong>Datos de uso:</strong> registros de acceso y emisión de certificados con fines de auditoría.</li>
+</ul>
+
+<h2>3. Uso de Google Drive</h2>
+<p>Utilizamos la API de Google Drive exclusivamente para:</p>
+<ul>
+  <li>Almacenar los certificados generados en formato PDF.</li>
+  <li>Almacenar las plantillas de certificados en formato DOCX.</li>
+</ul>
+<p>Solo accedemos a los archivos creados por nuestra aplicación (scope: <code>drive.file</code>). No accedemos, leemos ni modificamos ningún otro archivo en la cuenta de Google Drive del usuario.</p>
+
+<h2>4. Finalidad del tratamiento</h2>
+<ul>
+  <li>Generación y almacenamiento de certificados digitales.</li>
+  <li>Verificación de autenticidad de certificados mediante código QR.</li>
+  <li>Gestión de cursos y alumnos por parte de las organizaciones clientes.</li>
+</ul>
+
+<h2>5. Compartición de datos</h2>
+<p>No vendemos, alquilamos ni compartimos datos personales con terceros, excepto:</p>
+<ul>
+  <li>Con Google Drive, exclusivamente para el almacenamiento de archivos generados por la plataforma.</li>
+  <li>Cuando sea requerido por ley o autoridad competente.</li>
+</ul>
+
+<h2>6. Seguridad</h2>
+<p>Implementamos medidas de seguridad técnicas y organizativas para proteger los datos:</p>
+<ul>
+  <li>Cifrado de contraseñas con BCrypt.</li>
+  <li>Autenticación mediante JWT (JSON Web Tokens).</li>
+  <li>Comunicaciones cifradas con HTTPS/TLS.</li>
+  <li>Acceso a Google Drive mediante OAuth 2.0 con tokens cifrados.</li>
+</ul>
+
+<h2>7. Retención de datos</h2>
+<p>Los datos se conservan mientras la organización cliente mantenga su cuenta activa. Los certificados eliminados se mueven a una carpeta de histórico en Google Drive por un período de 90 días antes de su eliminación definitiva.</p>
+
+<h2>8. Derechos del usuario</h2>
+<p>Los titulares de los datos pueden ejercer sus derechos de acceso, rectificación, cancelación y oposición contactando a la organización que emitió el certificado o directamente a nosotros en <a href="mailto:info@certificadosqr.store">info@certificadosqr.store</a>.</p>
+
+<h2>9. Contacto</h2>
+<p>Para consultas sobre privacidad: <a href="mailto:info@certificadosqr.store">info@certificadosqr.store</a></p>
+</body>
+</html>

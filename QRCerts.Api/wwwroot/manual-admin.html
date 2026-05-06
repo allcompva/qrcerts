@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Administrador — QRCerts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.8}
+
+  .sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;background:#0f172a;color:#e2e8f0;overflow-y:auto;padding:24px 0}
+  .sidebar-header{padding:0 24px 24px;border-bottom:1px solid #1e293b}
+  .sidebar-header h2{font-size:1.2rem;font-weight:800;color:#f43f5e}
+  .sidebar-header p{font-size:0.75rem;color:#64748b;margin-top:4px}
+  .nav-section{padding:16px 0}
+  .nav-section-title{padding:0 24px;font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:700;margin-bottom:8px}
+  .nav-link{display:block;padding:8px 24px;color:#94a3b8;text-decoration:none;font-size:0.88rem;transition:all .2s;border-left:3px solid transparent}
+  .nav-link:hover{color:#f1f5f9;background:rgba(255,255,255,0.05);border-left-color:#f43f5e}
+
+  .content{margin-left:280px;padding:48px 64px;max-width:900px}
+  h1{font-size:2rem;font-weight:800;color:#0f172a;margin-bottom:8px}
+  .subtitle{color:#64748b;font-size:1rem;margin-bottom:40px}
+  h2{font-size:1.4rem;font-weight:700;color:#be123c;margin:48px 0 16px;padding-top:24px;border-top:1px solid #e2e8f0}
+  h2:first-of-type{border-top:none;margin-top:0}
+  h3{font-size:1.1rem;font-weight:600;color:#334155;margin:24px 0 12px}
+  p{margin-bottom:16px;font-size:0.95rem}
+  ol,ul{margin-bottom:16px;padding-left:24px}
+  li{margin-bottom:8px;font-size:0.95rem}
+
+  .step-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative;padding-left:56px}
+  .step-box::before{content:attr(data-step);position:absolute;left:16px;top:20px;width:28px;height:28px;border-radius:50%;background:#be123c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700}
+  .step-box h4{font-size:0.95rem;font-weight:600;color:#0f172a;margin-bottom:4px}
+  .step-box p{margin-bottom:0;color:#64748b;font-size:0.88rem}
+
+  .tip{background:#fdf2f8;border-left:4px solid #ec4899;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .tip strong{color:#be123c}
+
+  .warning{background:#fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .warning strong{color:#92400e}
+
+  .danger{background:#fee2e2;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .danger strong{color:#991b1b}
+
+  code{background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:0.85rem;color:#be123c}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid #e2e8f0;font-size:0.9rem}
+  th{background:#f8fafc;font-weight:600;color:#475569}
+
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .content{margin-left:0;padding:24px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>QRCerts Admin</h2>
+    <p>Manual de Administrador</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Inicio</div>
+    <a href="#acceso" class="nav-link">Acceso</a>
+    <a href="#panel" class="nav-link">Panel de administración</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Empresas</div>
+    <a href="#otec-crear" class="nav-link">Crear empresa</a>
+    <a href="#otec-editar" class="nav-link">Editar empresa</a>
+    <a href="#otec-usuarios" class="nav-link">Gestionar usuarios</a>
+    <a href="#otec-moodle" class="nav-link">Habilitar Moodle</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Cuotas</div>
+    <a href="#quota-activar" class="nav-link">Activar cuotas</a>
+    <a href="#quota-ordenes" class="nav-link">Órdenes de compra</a>
+    <a href="#quota-alertas" class="nav-link">Alertas y colores</a>
+    <a href="#quota-historial" class="nav-link">Historial y auditoría</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Sistema</div>
+    <a href="#drive" class="nav-link">Google Drive</a>
+    <a href="#migracion" class="nav-link">Migración</a>
+  </div>
+</nav>
+
+<main class="content">
+  <h1>Manual de Administrador</h1>
+  <p class="subtitle">Guía para la gestión de empresas, usuarios, cuotas y configuración del sistema QRCerts.</p>
+
+  <!-- ACCESO -->
+  <h2 id="acceso">Acceso al sistema</h2>
+  <p>Ingrese a <a href="https://certificadosqr.store/app/#/admin/login">certificadosqr.store/app/#/admin/login</a> con las credenciales de administrador.</p>
+
+  <!-- PANEL -->
+  <h2 id="panel">Panel de administración</h2>
+  <p>Desde el panel de administración puede gestionar:</p>
+  <ul>
+    <li><strong>Empresas (OTECs)</strong> — crear, editar y eliminar empresas clientes</li>
+    <li><strong>Usuarios</strong> — crear usuarios para cada empresa</li>
+    <li><strong>Cuotas</strong> — configurar el sistema de cuotas comerciales por empresa</li>
+  </ul>
+
+  <!-- EMPRESAS -->
+  <h2 id="otec-crear">Crear una empresa</h2>
+  <div class="step-box" data-step="1">
+    <h4>Ingresar datos</h4>
+    <p>Nombre de la empresa y slug (URL amigable, se genera automáticamente desde el nombre).</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Estado</h4>
+    <p>Activa o Inactiva. Una empresa inactiva no puede acceder al sistema.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4>Guardar</h4>
+    <p>La empresa queda creada y lista para asignarle usuarios.</p>
+  </div>
+
+  <h3 id="otec-editar">Editar empresa</h3>
+  <p>Desde la tabla de empresas, haga clic en el ícono de edición. Puede modificar nombre, slug y estado.</p>
+
+  <h3 id="otec-usuarios">Gestionar usuarios</h3>
+  <p>Cada empresa puede tener múltiples usuarios. Desde la tabla de empresas, acceda a los usuarios de la empresa para:</p>
+  <ul>
+    <li>Crear nuevos usuarios con nombre de usuario y contraseña</li>
+    <li>Editar datos de usuarios existentes</li>
+    <li>Desactivar usuarios</li>
+  </ul>
+  <div class="tip">
+    <strong>Nota:</strong> Cada usuario opera exclusivamente dentro de su empresa. No puede ver datos de otras empresas.
+  </div>
+
+  <h3 id="otec-moodle">Habilitar Moodle</h3>
+  <p>Al crear o editar una empresa, active la casilla "Habilitar integración Moodle". Esto hace que los usuarios de la empresa vean la opción Moodle en su menú y puedan importar alumnos desde su plataforma Moodle.</p>
+
+  <!-- CUOTAS -->
+  <h2 id="quota-activar">Sistema de cuotas</h2>
+  <p>El sistema de cuotas permite controlar cuántos certificados puede emitir cada empresa. Se accede desde el ícono <strong>$</strong> en la tabla de empresas.</p>
+
+  <h3>Activar/Desactivar</h3>
+  <p>Use el switch para activar o desactivar las cuotas de una empresa:</p>
+  <table>
+    <tr><th>Estado</th><th>Comportamiento</th></tr>
+    <tr><td><strong>Desactivado</strong></td><td>La empresa emite certificados sin límite</td></tr>
+    <tr><td><strong>Activado</strong></td><td>La empresa solo puede emitir si tiene saldo disponible y vigente</td></tr>
+  </table>
+
+  <h3 id="quota-ordenes">Órdenes de compra</h3>
+  <p>Una orden de compra define cuántos certificados puede emitir la empresa y hasta cuándo:</p>
+
+  <div class="step-box" data-step="1">
+    <h4>Cantidad</h4>
+    <p>Número de certificados que puede emitir (tanto nuevos como re-emisiones consumen cuota).</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Fecha de vencimiento</h4>
+    <p>Hasta cuándo son válidos. Pasada esta fecha, la empresa no puede emitir aunque tenga saldo.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4>Notas (opcional)</h4>
+    <p>Texto libre para referencia interna (ej: "Factura #1234").</p>
+  </div>
+
+  <div class="warning">
+    <strong>Regla importante:</strong> Al crear una nueva orden, la anterior se desactiva automáticamente y pasa al historial. Las órdenes no se editan ni cancelan — solo se crean nuevas.
+  </div>
+
+  <p>La empresa agota su cuota cuando se cumple <strong>lo que ocurra primero</strong>:</p>
+  <ul>
+    <li>Se acaba la cantidad de certificados</li>
+    <li>Vence la fecha de la orden</li>
+  </ul>
+
+  <h3 id="quota-alertas">Alertas y colores</h3>
+  <p>La empresa ve en su barra de navegación un indicador con el estado de su cuota:</p>
+  <table>
+    <tr><th>Color</th><th>Condición</th></tr>
+    <tr><td style="color:#2e7d32;font-weight:700">Verde</td><td>Más de 10 días para vencer y menos del 50% utilizado</td></tr>
+    <tr><td style="color:#f57f17;font-weight:700">Amarillo</td><td>Menos de 7 días para vencer O más del 70% utilizado</td></tr>
+    <tr><td style="color:#c62828;font-weight:700">Rojo</td><td>3 días o menos para vencer O 90% o más utilizado</td></tr>
+  </table>
+
+  <h3 id="quota-historial">Historial y auditoría</h3>
+  <p>Desde la pantalla de cuotas puede consultar:</p>
+  <ul>
+    <li><strong>Historial de órdenes</strong> — todas las órdenes creadas para la empresa con su estado (Activa, Vencida, Reemplazada)</li>
+    <li><strong>Registro de auditoría</strong> — cada evento: orden creada, orden reemplazada, cuota consumida</li>
+  </ul>
+
+  <!-- SISTEMA -->
+  <h2 id="drive">Google Drive</h2>
+  <p>Los certificados y plantillas se almacenan en Google Drive. La estructura de carpetas es:</p>
+  <pre style="background:#f1f5f9;padding:16px;border-radius:8px;font-size:0.85rem;margin:16px 0">
+QRCerts/
+  Certificados/
+    {empresa}/
+      nombre-alumno_nombre-curso.pdf
+  Plantillas/
+    {empresa}/
+      plantilla.docx
+  Historico/
+    {empresa}/
+      (certificados eliminados)
+  </pre>
+  <p>Estado de la conexión: <code>GET /api/admin/drive/status</code></p>
+
+  <div class="danger">
+    <strong>No acceder manualmente al Drive.</strong> Los archivos se gestionan exclusivamente a través de la API. Modificar o eliminar archivos manualmente puede generar inconsistencias.
+  </div>
+
+  <h3 id="migracion">Migración de certificados</h3>
+  <p>Para migrar certificados existentes (anteriores a la integración con Drive) a la nube:</p>
+  <ul>
+    <li><strong>Estado:</strong> <code>GET /api/admin/migration/certs-status</code> — muestra cuántos están migrados y cuántos pendientes</li>
+    <li><strong>Migrar:</strong> <code>GET /api/admin/migration/certs-to-drive?batch=50</code> — procesa de a 50 certificados por vez</li>
+  </ul>
+  <div class="tip">
+    <strong>Nota:</strong> La migración se ejecuta en bloques para no sobrecargar el sistema. Puede ejecutarla múltiples veces hasta que no queden pendientes.
+  </div>
+
+</main>
+</body>
+</html>

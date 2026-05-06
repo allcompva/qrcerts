@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuSafe - Documentos verificables con QR y contraseña</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --dark: #0f172a;
+            --dark2: #1e293b;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --success: #059669;
+            --accent: #f43f5e;
+        }
+        body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; color:var(--dark); line-height:1.7; }
+        a { text-decoration:none; color:inherit; }
+
+        /* === NAV === */
+        nav {
+            position:fixed; top:0; left:0; right:0; z-index:100;
+            background:rgba(15,23,42,0.95); backdrop-filter:blur(12px);
+            padding:0 2rem; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .nav-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+        .nav-logo { font-size:1.4rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:0.5rem; }
+        .nav-logo .dot { color:var(--accent); }
+        .nav-links { display:flex; gap:0.25rem; }
+        .nav-links a { color:rgba(255,255,255,0.6); padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
+        .nav-links a:hover { color:#fff; background:rgba(255,255,255,0.08); }
+        .nav-cta { background:var(--primary)!important; color:#fff!important; font-weight:600!important; }
+        .nav-cta:hover { background:var(--primary-dark)!important; }
+
+        /* === HERO === */
+        .hero {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            background:linear-gradient(135deg,var(--dark) 0%,#0c1e3a 50%,#0f2847 100%);
+            position:relative; overflow:hidden; padding:6rem 2rem 4rem;
+        }
+        .hero::before {
+            content:''; position:absolute; top:-50%; right:-30%; width:800px; height:800px;
+            background:radial-gradient(circle,rgba(37,99,235,0.12) 0%,transparent 70%);
+            border-radius:50%;
+        }
+        .hero::after {
+            content:''; position:absolute; bottom:-40%; left:-20%; width:600px; height:600px;
+            background:radial-gradient(circle,rgba(244,63,94,0.08) 0%,transparent 70%);
+            border-radius:50%;
+        }
+        .hero-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; position:relative; z-index:1; }
+        .hero-text h1 { font-size:3.2rem; font-weight:800; color:#fff; line-height:1.15; letter-spacing:-1.5px; margin-bottom:1rem; }
+        .hero-text h1 .accent { color:var(--accent); }
+        .hero-text h1 .blue { color:var(--primary); }
+        .hero-text p { font-size:1.15rem; color:rgba(255,255,255,0.55); margin-bottom:2rem; max-width:480px; }
+        .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+        .btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.8rem 1.8rem; border-radius:10px; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:all 0.2s; }
+        .btn-primary { background:var(--primary); color:#fff; }
+        .btn-primary:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 8px 25px rgba(37,99,235,0.35); }
+        .btn-outline { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.2); }
+        .btn-outline:hover { border-color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.05); }
+        .btn-accent { background:var(--accent); color:#fff; }
+        .btn-accent:hover { background:#e11d48; transform:translateY(-2px); box-shadow:0 8px 25px rgba(244,63,94,0.35); }
+        .btn-success { background:var(--success); color:#fff; }
+        .btn-success:hover { background:#047857; transform:translateY(-2px); }
+        .btn-sm { padding:0.55rem 1.2rem; font-size:0.9rem; }
+
+        /* Hero visual */
+        .hero-visual { position:relative; }
+        .hero-mockup {
+            background:var(--dark2); border-radius:16px; border:1px solid rgba(255,255,255,0.08);
+            padding:1.5rem; box-shadow:0 25px 60px rgba(0,0,0,0.4);
+            transform:perspective(800px) rotateY(-3deg) rotateX(2deg);
+        }
+        .mock-bar { display:flex; gap:6px; margin-bottom:1rem; }
+        .mock-dot { width:10px; height:10px; border-radius:50%; }
+        .mock-dot.r { background:#f87171; } .mock-dot.y { background:#fbbf24; } .mock-dot.g { background:#4ade80; }
+        .mock-content { background:#1e293b; border-radius:10px; padding:1.5rem; }
+        .mock-line { height:8px; border-radius:4px; margin-bottom:8px; }
+        .mock-line.w100 { width:100%; background:rgba(255,255,255,0.06); }
+        .mock-line.w80 { width:80%; background:rgba(255,255,255,0.05); }
+        .mock-line.w60 { width:60%; background:rgba(255,255,255,0.04); }
+        .mock-qr {
+            width:60px; height:60px; border:2px solid rgba(255,255,255,0.15);
+            border-radius:6px; position:absolute; bottom:2rem; right:2rem;
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.55rem; color:rgba(255,255,255,0.3); background:var(--dark2);
+        }
+        .hero-badge {
+            position:absolute; top:-1rem; right:-1rem;
+            background:var(--accent); color:#fff; padding:0.4rem 1rem;
+            border-radius:20px; font-size:0.8rem; font-weight:700;
+            box-shadow:0 4px 15px rgba(244,63,94,0.4);
+        }
+        .hero-float {
+            position:absolute; bottom:-0.5rem; left:-1.5rem;
+            background:#fff; border-radius:12px; padding:0.75rem 1rem;
+            box-shadow:0 8px 25px rgba(0,0,0,0.15);
+            display:flex; align-items:center; gap:0.5rem;
+            font-size:0.8rem; font-weight:600; color:var(--success);
+        }
+
+        /* Trust bar */
+        .trust { text-align:center; padding:0.75rem 2rem; background:var(--dark2); border-bottom:1px solid rgba(255,255,255,0.05); }
+        .trust span { color:rgba(255,255,255,0.35); font-size:0.8rem; }
+        .trust strong { color:rgba(255,255,255,0.6); }
+
+        /* === SECTIONS === */
+        section { padding:5rem 2rem; }
+        .container { max-width:1100px; margin:0 auto; }
+        .section-tag { font-size:0.8rem; text-transform:uppercase; letter-spacing:3px; color:var(--primary); font-weight:700; margin-bottom:0.5rem; }
+        .section-title { font-size:2.2rem; font-weight:800; letter-spacing:-1px; margin-bottom:0.5rem; }
+        .section-sub { color:var(--gray); font-size:1.05rem; max-width:600px; margin-bottom:3rem; }
+
+        /* === HOW IT WORKS === */
+        .how { background:var(--light); }
+        .steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+        .step-card {
+            background:#fff; border-radius:16px; padding:1.75rem 1.5rem;
+            border:1px solid #e2e8f0; text-align:center;
+            transition:all 0.3s; position:relative;
+        }
+        .step-card:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(0,0,0,0.06); border-color:var(--primary); }
+        .step-num {
+            width:40px; height:40px; background:var(--primary); color:#fff;
+            border-radius:12px; display:flex; align-items:center; justify-content:center;
+            font-weight:800; font-size:1.1rem; margin:0 auto 1rem;
+        }
+        .step-card h3 { font-size:1rem; margin-bottom:0.4rem; }
+        .step-card p { font-size:0.88rem; color:var(--gray); }
+        .step-arrow { position:absolute; right:-1.25rem; top:50%; color:var(--primary); font-size:1.2rem; z-index:1; }
+
+        /* === ANALOGY === */
+        .analogy {
+            background:linear-gradient(135deg,var(--dark),var(--dark2));
+            color:#fff; text-align:center;
+        }
+        .analogy .section-tag { color:var(--accent); }
+        .analogy .section-title { color:#fff; }
+        .analogy .section-sub { color:rgba(255,255,255,0.5); margin-left:auto; margin-right:auto; }
+        .analogy-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:2rem; align-items:center; max-width:800px; margin:0 auto; }
+        .analogy-card {
+            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+            border-radius:16px; padding:2rem; text-align:center;
+        }
+        .analogy-card .emoji { font-size:2.5rem; margin-bottom:0.75rem; }
+        .analogy-card h3 { font-size:1.1rem; margin-bottom:0.5rem; }
+        .analogy-card p { font-size:0.9rem; color:rgba(255,255,255,0.5); }
+        .analogy-equals { font-size:2rem; color:var(--primary); font-weight:800; }
+
+        /* === FEATURES === */
+        .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+        .feat {
+            background:#fff; border:1px solid #e2e8f0; border-radius:14px;
+            padding:1.5rem; transition:all 0.3s;
+        }
+        .feat:hover { border-color:var(--primary); box-shadow:0 8px 25px rgba(37,99,235,0.08); transform:translateY(-3px); }
+        .feat-icon {
+            width:44px; height:44px; border-radius:12px; display:flex;
+            align-items:center; justify-content:center; font-size:1.3rem; margin-bottom:1rem;
+        }
+        .feat-icon.blue { background:var(--primary-light); }
+        .feat-icon.green { background:#d1fae5; }
+        .feat-icon.red { background:#ffe4e6; }
+        .feat-icon.yellow { background:#fef3c7; }
+        .feat-icon.purple { background:#ede9fe; }
+        .feat-icon.gray { background:#f1f5f9; }
+        .feat h3 { font-size:1rem; margin-bottom:0.3rem; }
+        .feat p { font-size:0.88rem; color:var(--gray); }
+
+        /* === PRICING === */
+        .pricing { background:var(--light); }
+        .pricing-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; max-width:1000px; margin:0 auto; }
+        .price-card {
+            background:#fff; border-radius:20px; padding:2.5rem;
+            border:2px solid #e2e8f0; position:relative; transition:all 0.3s;
+        }
+        .price-card:hover { transform:translateY(-4px); box-shadow:0 15px 40px rgba(0,0,0,0.08); }
+        .price-card.featured { border-color:var(--primary); }
+        .price-badge {
+            position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+            background:var(--primary); color:#fff; padding:0.3rem 1.25rem;
+            border-radius:20px; font-size:0.8rem; font-weight:700;
+            white-space:nowrap;
+        }
+        .price-card .plan-name { font-size:0.85rem; text-transform:uppercase; letter-spacing:2px; color:var(--gray); font-weight:700; margin-bottom:0.75rem; }
+        .price-card .price { font-size:2.5rem; font-weight:800; color:var(--dark); margin-bottom:0.25rem; }
+        .price-card .price span { font-size:1rem; font-weight:500; color:var(--gray); }
+        .price-card .price-desc { font-size:0.9rem; color:var(--gray); margin-bottom:1.5rem; }
+        .price-card ul { list-style:none; margin-bottom:2rem; }
+        .price-card ul li {
+            padding:0.5rem 0; font-size:0.92rem; display:flex; align-items:center; gap:0.5rem;
+            border-bottom:1px solid #f1f5f9;
+        }
+        .price-card ul li .check { color:var(--success); font-weight:700; }
+        .price-card ul li .x { color:#dc2626; }
+        .price-card .btn { width:100%; justify-content:center; }
+
+        /* === DEMO === */
+        .demo { text-align:center; }
+        .demo-box {
+            max-width:600px; margin:0 auto;
+            background:#fff; border-radius:20px; padding:3rem;
+            border:2px dashed var(--primary); position:relative;
+        }
+        .demo-box .watermark-note {
+            background:#fef3c7; border:1px solid #fde68a; border-radius:10px;
+            padding:0.75rem 1rem; margin-top:1.5rem; font-size:0.88rem; color:#92400e;
+        }
+
+        /* === FAQ === */
+        .faq-list { max-width:700px; margin:0 auto; }
+        .faq-item {
+            background:#fff; border:1px solid #e2e8f0; border-radius:12px;
+            margin-bottom:0.75rem; overflow:hidden; cursor:pointer;
+            transition:all 0.2s;
+        }
+        .faq-item:hover { border-color:var(--primary); }
+        .faq-item.open { border-color:var(--primary); }
+        .faq-q {
+            padding:1rem 1.25rem; display:flex; justify-content:space-between;
+            align-items:center; font-weight:600; font-size:0.95rem;
+        }
+        .faq-q .arrow { transition:transform 0.3s; color:var(--primary); font-size:1.2rem; }
+        .faq-item.open .faq-q .arrow { transform:rotate(180deg); }
+        .faq-a { padding:0 1.25rem 1rem; font-size:0.9rem; color:var(--gray); display:none; }
+        .faq-item.open .faq-a { display:block; }
+
+        /* === CTA === */
+        .cta {
+            background:linear-gradient(135deg,var(--dark),#0c2340);
+            color:#fff; text-align:center; padding:5rem 2rem;
+        }
+        .cta h2 { font-size:2.2rem; font-weight:800; margin-bottom:0.5rem; }
+        .cta p { color:rgba(255,255,255,0.5); font-size:1.1rem; margin-bottom:2rem; max-width:500px; margin-left:auto; margin-right:auto; }
+
+        /* === FOOTER === */
+        footer {
+            background:var(--dark); color:rgba(255,255,255,0.3);
+            padding:2rem; text-align:center; font-size:0.85rem;
+        }
+        footer a { color:rgba(255,255,255,0.5); }
+
+        /* === RESPONSIVE === */
+        @media(max-width:900px) {
+            .hero-inner { grid-template-columns:1fr; text-align:center; }
+            .hero-text p { margin-left:auto; margin-right:auto; }
+            .hero-btns { justify-content:center; }
+            .hero-visual { display:none; }
+            .steps-grid { grid-template-columns:1fr 1fr; }
+            .step-arrow { display:none; }
+            .features-grid { grid-template-columns:1fr; }
+            .pricing-grid { grid-template-columns:1fr!important; }
+            .analogy-grid { grid-template-columns:1fr; }
+            .analogy-equals { transform:rotate(90deg); }
+            .hero-text h1 { font-size:2.4rem; }
+        }
+        @media(max-width:600px) {
+            .steps-grid { grid-template-columns:1fr; }
+            .nav-links a:not(.nav-cta) { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- === NAV === -->
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">Docusafe<span class="dot">.</span></a>
+        <div class="nav-links">
+            <a href="#como">Como funciona</a>
+            <a href="#funciones">Funciones</a>
+            <a href="#precios">Precios</a>
+            <a href="#faq">FAQ</a>
+            <a href="#demo" class="nav-cta">Probar gratis</a>
+        </div>
+    </div>
+</nav>
+
+<!-- === HERO === -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <h1>Documentos con <span class="accent">autenticidad</span> <span class="blue">verificable</span></h1>
+            <p>Convierta sus documentos Word en PDFs protegidos con contrasena y codigo QR. Igual que los resumenes del banco, pero para cualquier documento de su empresa.</p>
+            <div class="hero-btns">
+                <a href="#demo" class="btn btn-primary">Descargar demo gratis</a>
+                <a href="#como" class="btn btn-outline">Ver como funciona</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-mockup">
+                <div class="mock-bar"><div class="mock-dot r"></div><div class="mock-dot y"></div><div class="mock-dot g"></div></div>
+                <div class="mock-content">
+                    <div class="mock-line w80"></div>
+                    <div class="mock-line w100"></div>
+                    <div class="mock-line w100"></div>
+                    <div class="mock-line w60"></div>
+                    <div class="mock-line w100"></div>
+                    <div class="mock-line w80"></div>
+                    <div class="mock-line w100"></div>
+                    <div class="mock-line w60"></div>
+                </div>
+                <div class="mock-qr">QR</div>
+                <div class="hero-badge">Protegido</div>
+            </div>
+            <div class="hero-float">&#128274; Contrasena requerida</div>
+        </div>
+    </div>
+</section>
+
+<!-- === TRUST === -->
+<div class="trust">
+    <span>El mismo mecanismo que usan <strong>bancos</strong>, <strong>AFPs</strong> y <strong>aseguradoras</strong> para proteger documentos sensibles</span>
+</div>
+
+<!-- === HOW IT WORKS === -->
+<section class="how" id="como">
+    <div class="container">
+        <div class="section-tag">Simple</div>
+        <div class="section-title">4 pasos. Menos de 1 minuto.</div>
+        <div class="section-sub">No necesita conocimientos tecnicos. Si sabe adjuntar un archivo a un email, sabe usar DocuSafe.</div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Suba el Word</h3>
+                <p>Seleccione el documento .docx que quiere proteger.</p>
+                <div class="step-arrow">&#10132;</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Ponga la clave</h3>
+                <p>Asigne la contrasena que usara el destinatario (ej: su DNI).</p>
+                <div class="step-arrow">&#10132;</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Procese</h3>
+                <p>Un click. El sistema convierte, protege, agrega QR y sube a la nube.</p>
+                <div class="step-arrow">&#10132;</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <h3>Imprima y entregue</h3>
+                <p>Imprima el PDF con QR. Al escanearlo, pide contrasena para ver el documento.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === ANALOGY === -->
+<section class="analogy">
+    <div class="container">
+        <div class="section-tag">Familiar</div>
+        <div class="section-title">Ya lo conoce. Ya lo uso.</div>
+        <div class="section-sub">Es exactamente lo mismo que hace el banco cuando le manda el resumen de su tarjeta.</div>
+
+        <div class="analogy-grid">
+            <div class="analogy-card">
+                <div class="emoji">&#127974;</div>
+                <h3>Resumen del banco</h3>
+                <p>Le llega un PDF. Le pide su DNI para abrirlo. Si la clave es correcta, ve el resumen.</p>
+            </div>
+            <div class="analogy-equals">=</div>
+            <div class="analogy-card">
+                <div class="emoji">&#128196;</div>
+                <h3>DocuSafe</h3>
+                <p>Usted genera un PDF con QR. El destinatario lo escanea. Le pide la clave. Si es correcta, ve el documento.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === FEATURES === -->
+<section id="funciones">
+    <div class="container">
+        <div class="section-tag">Completo</div>
+        <div class="section-title">Todo lo que necesita. Nada que no.</div>
+        <div class="section-sub">Funcionalidades pensadas para que cualquier persona pueda usarlo sin ayuda tecnica.</div>
+
+        <div class="features-grid">
+            <div class="feat">
+                <div class="feat-icon blue">&#128196;</div>
+                <h3>Word a PDF automatico</h3>
+                <p>Cargue su .docx y el sistema lo convierte a PDF manteniendo el formato original.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon red">&#128274;</div>
+                <h3>Proteccion con contrasena</h3>
+                <p>Cada PDF se encripta con AES-256. Sin la clave, nadie puede abrirlo.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon purple">&#128279;</div>
+                <h3>QR de verificacion</h3>
+                <p>Se inserta un codigo QR en el documento que apunta a la version digital protegida.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon yellow">&#9729;</div>
+                <h3>Subida a Google Drive</h3>
+                <p>El PDF se sube automaticamente a su Drive. Sin servidores, sin costos de hosting.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon green">&#128424;</div>
+                <h3>Listo para imprimir</h3>
+                <p>Genera una version imprimible con el QR incluido para entregar en mano.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon gray">&#128225;</div>
+                <h3>Compartir por WhatsApp, email o Telegram</h3>
+                <p>Envie el documento protegido directamente desde la app con un mensaje formal predefinido.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === PRICING === -->
+<section class="pricing" id="precios">
+    <div class="container">
+        <div class="section-tag">Inversion</div>
+        <div class="section-title">Simple y transparente</div>
+        <div class="section-sub">Elija el plan que mejor se adapte a su empresa.</div>
+
+        <div class="pricing-grid">
+            <!-- Demo -->
+            <div class="price-card">
+                <div class="plan-name">Demo gratuita</div>
+                <div class="price">$0</div>
+                <div class="price-desc">Pruebe antes de comprar</div>
+                <ul>
+                    <li><span class="check">&#10003;</span> Todas las funcionalidades</li>
+                    <li><span class="check">&#10003;</span> Conversion Word a PDF</li>
+                    <li><span class="check">&#10003;</span> QR + Contrasena</li>
+                    <li><span class="check">&#10003;</span> Subida a Google Drive</li>
+                    <li><span class="check">&#10003;</span> Compartir por WhatsApp/Email</li>
+                    <li><span class="x">&#10007;</span> <strong>Marca de agua en los PDFs</strong></li>
+                    <li><span class="x">&#10007;</span> Sin soporte tecnico</li>
+                </ul>
+                <a href="#demo" class="btn btn-outline" style="color:var(--dark);border-color:#cbd5e1;">Descargar demo</a>
+            </div>
+
+            <!-- Mensual -->
+            <div class="price-card featured">
+                <div class="price-badge">Mas elegido</div>
+                <div class="plan-name">Plan mensual</div>
+                <div class="price">$10.000 <span>ARS/mes</span></div>
+                <div class="price-desc">Sin compromiso, cancele cuando quiera</div>
+                <ul>
+                    <li><span class="check">&#10003;</span> Todas las funcionalidades</li>
+                    <li><span class="check">&#10003;</span> Conversion Word a PDF</li>
+                    <li><span class="check">&#10003;</span> QR + Contrasena</li>
+                    <li><span class="check">&#10003;</span> Subida a Google Drive</li>
+                    <li><span class="check">&#10003;</span> Compartir por WhatsApp/Email</li>
+                    <li><span class="check">&#10003;</span> <strong>Sin marca de agua</strong></li>
+                    <li><span class="check">&#10003;</span> Soporte tecnico incluido</li>
+                </ul>
+                <a href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=1257d6194a0843dc94325f3d90360f73" class="btn btn-primary" target="_blank">Contratar plan mensual</a>
+            </div>
+
+            <!-- Anual -->
+            <div class="price-card" style="border-color:var(--success);position:relative;">
+                <div class="price-badge" style="background:var(--success);">50% OFF</div>
+                <div class="plan-name">Plan anual</div>
+                <div class="price">$50.000 <span>ARS/ano</span></div>
+                <div class="price-desc">Ahorre $70.000 respecto al plan mensual</div>
+                <ul>
+                    <li><span class="check">&#10003;</span> Todas las funcionalidades</li>
+                    <li><span class="check">&#10003;</span> Conversion Word a PDF</li>
+                    <li><span class="check">&#10003;</span> QR + Contrasena</li>
+                    <li><span class="check">&#10003;</span> Subida a Google Drive</li>
+                    <li><span class="check">&#10003;</span> Compartir por WhatsApp/Email</li>
+                    <li><span class="check">&#10003;</span> <strong>Sin marca de agua</strong></li>
+                    <li><span class="check">&#10003;</span> Soporte tecnico + capacitacion</li>
+                </ul>
+                <a href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=a53c530759ee494d8d8fb4405c2a8da7" class="btn btn-success" target="_blank">Contratar plan anual</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === DEMO === -->
+<section class="demo" id="demo">
+    <div class="container">
+        <div class="section-tag">Pruebelo</div>
+        <div class="section-title">Descargue la demo gratuita</div>
+        <div class="section-sub" style="margin-left:auto;margin-right:auto;">Todas las funcionalidades habilitadas. Los documentos generados tendran una marca de agua "DEMO - DocuSafe".</div>
+
+        <div class="demo-box">
+            <div style="font-size:3.5rem;margin-bottom:1rem;">&#128230;</div>
+            <h3 style="font-size:1.2rem;margin-bottom:0.5rem;">DocuSafe Demo</h3>
+            <p style="color:var(--gray);margin-bottom:1.5rem;">Windows 10/11 | Requiere Microsoft Word instalado</p>
+            <a href="/DocuSafe-Demo.zip" class="btn btn-accent" download>Descargar DocuSafe Demo (gratis)</a>
+
+            <div class="watermark-note">
+                <strong>Nota:</strong> La version demo agrega la marca de agua "DEMO - DocuSafe" a todos los documentos generados. Para obtener la version completa sin marca de agua, adquiera la licencia completa.
+            </div>
+            <div class="watermark-note" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af;margin-top:0.75rem;">
+                <strong>Importante:</strong> Al ejecutar por primera vez, Windows puede mostrar un aviso de "Windows protegio su PC". Esto es normal para cualquier aplicacion nueva. Haga click en <strong>"Mas informacion"</strong> y luego en <strong>"Ejecutar de todas formas"</strong>.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === FAQ === -->
+<section id="faq" style="background:var(--light);">
+    <div class="container">
+        <div class="section-tag">Preguntas frecuentes</div>
+        <div class="section-title">Dudas comunes</div>
+        <div class="section-sub">Todo lo que necesita saber antes de empezar.</div>
+
+        <div class="faq-list">
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Necesito conocimientos tecnicos para usarlo?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">No. Si sabe adjuntar un archivo a un email, sabe usar DocuSafe. Son 4 pasos: seleccionar archivo, poner contrasena, click en procesar, imprimir. Nada mas.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Que necesito para que funcione?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">Una computadora con Windows 10/11, Microsoft Word instalado, una cuenta de Gmail (para Google Drive) y una impresora. Nada mas.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Tiene costo mensual?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">No. Es un pago unico por la licencia. Google Drive es gratuito hasta 15 GB, que alcanza para miles de documentos PDF.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>El destinatario necesita instalar algo?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">No. Solo necesita un celular con camara para escanear el QR. El PDF se abre en el navegador y le pide la contrasena. No necesita cuenta de Google ni ninguna app especial.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Es seguro? Que pasa si alguien escanea el QR sin autorizacion?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">El PDF esta encriptado con AES-256. Aunque alguien escanee el QR, necesita la contrasena para abrirlo. Sin la clave, el documento es inaccesible.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Esto es lo mismo que un NAS?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">No. Un NAS es solo un disco duro en red para guardar archivos. DocuSafe es un sistema que convierte, protege, genera QR y publica documentos. Son cosas completamente diferentes. DocuSafe usa Google Drive como almacenamiento, que es gratuito y no requiere comprar ningun equipo.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Puedo usarlo en mas de una computadora?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">Si. Puede instalar DocuSafe en varias computadoras. Todas suben los documentos a la misma cuenta de Google Drive.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q"><span>Que pasa si se me rompe la computadora?</span><span class="arrow">&#9660;</span></div>
+                <div class="faq-a">Los documentos ya procesados estan en Google Drive, a salvo. Solo necesita instalar DocuSafe en otra computadora y volver a autorizar el acceso a su Drive.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === CTA === -->
+<section class="cta">
+    <h2>Proteja sus documentos hoy</h2>
+    <p>Descargue la demo gratuita y compruebe usted mismo como funciona.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="#demo" class="btn btn-accent">Descargar demo gratis</a>
+        <a href="mailto:tuemail@empresa.com?subject=Consulta%20DocuSafe" class="btn btn-outline">Contactar ventas</a>
+    </div>
+</section>
+
+<!-- === FOOTER === -->
+<footer>
+    <p>DocuSafe<span style="color:var(--accent);">.</span> &copy; 2026 - Todos los derechos reservados</p>
+    <p style="margin-top:0.5rem;"><a href="mailto:tuemail@empresa.com">tuemail@empresa.com</a></p>
+</footer>
+
+</body>
+</html>

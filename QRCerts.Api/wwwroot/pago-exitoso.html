@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pago exitoso — DocuSafe</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#0c1e3a 50%,#0f2847 100%);color:#e2e8f0;padding:24px}
+
+  .card{max-width:560px;width:100%;background:rgba(30,41,59,0.8);border:1px solid #334155;border-radius:24px;padding:48px;text-align:center;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#059669,#10b981,#34d399)}
+
+  .icon{width:80px;height:80px;border-radius:50%;background:rgba(5,150,105,0.15);border:3px solid #059669;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 24px;animation:pop 0.5s ease}
+  @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+  h1{font-size:1.8rem;font-weight:800;color:#f1f5f9;margin-bottom:8px}
+  .subtitle{font-size:1.05rem;color:#94a3b8;margin-bottom:32px}
+
+  .details{background:rgba(15,23,42,0.5);border:1px solid #334155;border-radius:14px;padding:24px;margin-bottom:32px;text-align:left}
+  .details h3{font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:16px}
+  .detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(51,65,85,0.5);font-size:0.9rem}
+  .detail-row:last-child{border-bottom:none}
+  .detail-label{color:#94a3b8}
+  .detail-value{color:#e2e8f0;font-weight:600}
+
+  .download-section{margin-bottom:24px}
+  .download-section p{font-size:0.9rem;color:#94a3b8;margin-bottom:16px}
+
+  .btn-download{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:700;font-size:1.05rem;transition:all .3s;border:none;cursor:pointer}
+  .btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(5,150,105,0.4)}
+
+  .instructions{background:rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.2);border-radius:12px;padding:20px;margin-top:24px;text-align:left}
+  .instructions h3{font-size:0.9rem;color:#34d399;margin-bottom:12px;font-weight:700}
+  .instructions ol{padding-left:20px;font-size:0.85rem;color:#94a3b8}
+  .instructions li{padding:4px 0}
+
+  .footer-note{margin-top:28px;font-size:0.8rem;color:#475569}
+  .footer-note a{color:#10b981;text-decoration:none}
+
+  .confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0}
+  .confetti span{position:absolute;top:-20px;width:10px;height:10px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{top:110vh;transform:rotate(720deg)}}
+</style>
+</head>
+<body>
+
+<div class="confetti" id="confetti"></div>
+
+<div class="card" style="position:relative;z-index:1">
+  <div class="icon">✓</div>
+  <h1>Pago confirmado</h1>
+  <p class="subtitle">Gracias por adquirir DocuSafe. Tu licencia ya está activa.</p>
+
+  <div class="details">
+    <h3>Detalle de tu compra</h3>
+    <div class="detail-row">
+      <span class="detail-label">Producto</span>
+      <span class="detail-value">DocuSafe — Licencia completa</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Características</span>
+      <span class="detail-value">Sin marca de agua + Soporte</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Estado</span>
+      <span class="detail-value" style="color:#34d399">✓ Activa</span>
+    </div>
+  </div>
+
+  <div class="download-section">
+    <p>Descargá la versión completa de DocuSafe sin marca de agua:</p>
+    <a href="/DocuSafe-Full.zip" class="btn-download" download>
+      ⬇ Descargar DocuSafe Full
+    </a>
+  </div>
+
+  <div class="instructions">
+    <h3>Pasos para comenzar</h3>
+    <ol>
+      <li>Descargá y descomprimí el archivo ZIP</li>
+      <li>Ejecutá <strong>DocuSafe.exe</strong></li>
+      <li>Conectá tu cuenta de Google Drive (botón "Conectar")</li>
+      <li>Listo — arrastrá tu primer documento Word y generá el PDF seguro</li>
+    </ol>
+  </div>
+
+  <p class="footer-note">
+    ¿Necesitás ayuda? <a href="https://wa.me/5493512119822?text=Hola%2C%20compré%20DocuSafe%20y%20necesito%20ayuda">Contactar soporte por WhatsApp</a><br>
+    <a href="/docusafe.html">← Volver a DocuSafe</a>
+  </p>
+</div>
+
+<script>
+  // Confetti animation
+  const colors=['#059669','#10b981','#34d399','#2563eb','#f43f5e','#fbbf24'];
+  const confetti=document.getElementById('confetti');
+  for(let i=0;i<40;i++){
+    const span=document.createElement('span');
+    span.style.left=Math.random()*100+'%';
+    span.style.background=colors[Math.floor(Math.random()*colors.length)];
+    span.style.width=(Math.random()*8+4)+'px';
+    span.style.height=span.style.width;
+    span.style.animationDuration=(Math.random()*2+2)+'s';
+    span.style.animationDelay=(Math.random()*2)+'s';
+    span.style.opacity=Math.random()*0.8+0.2;
+    confetti.appendChild(span);
+  }
+  // Remove confetti after animation
+  setTimeout(()=>confetti.remove(),5000);
+</script>
+</body>
+</html>

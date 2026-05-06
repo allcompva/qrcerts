@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRCerts — Documentación de Cambios — Sesión 6 Abril 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#fff;color:#1e293b;line-height:1.8;padding:0}
+  .page{max-width:900px;margin:0 auto;padding:48px 40px}
+
+  h1{font-size:2rem;font-weight:800;color:#0f172a;margin-bottom:4px}
+  .date{color:#64748b;font-size:0.9rem;margin-bottom:32px;display:block}
+  h2{font-size:1.4rem;font-weight:700;color:#0f766e;margin:40px 0 16px;padding-top:20px;border-top:2px solid #e2e8f0}
+  h3{font-size:1.1rem;font-weight:600;color:#334155;margin:20px 0 10px}
+  p{margin-bottom:12px;font-size:0.93rem}
+  ul,ol{margin-bottom:14px;padding-left:24px}
+  li{margin-bottom:6px;font-size:0.93rem}
+  code{background:#f1f5f9;padding:2px 7px;border-radius:4px;font-size:0.85rem;color:#0f766e}
+  pre{background:#0f172a;color:#e2e8f0;padding:20px;border-radius:10px;font-size:0.82rem;overflow-x:auto;margin:12px 0 16px;line-height:1.6}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px}
+  th,td{padding:10px 14px;text-align:left;border:1px solid #e2e8f0;font-size:0.88rem}
+  th{background:#f8fafc;font-weight:600;color:#475569}
+
+  .status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+  .done{background:#dcfce7;color:#166534}
+  .pending{background:#fef3c7;color:#92400e}
+  .reverted{background:#fee2e2;color:#991b1b}
+
+  .section-summary{background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:20px;margin:16px 0}
+  .section-summary h4{color:#0f766e;font-size:0.95rem;margin-bottom:8px}
+
+  .file-list{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:12px 0}
+  .file-list h4{font-size:0.85rem;color:#475569;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+  .file-list code{display:block;margin:3px 0;font-size:0.82rem}
+
+  .toc{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:32px}
+  .toc h3{margin:0 0 12px;font-size:1rem;color:#0f766e}
+  .toc ol{margin:0;padding-left:20px}
+  .toc li{margin-bottom:4px}
+  .toc a{color:#0f766e;text-decoration:none;font-size:0.9rem}
+  .toc a:hover{text-decoration:underline}
+
+  @media print{
+    .page{padding:20px}
+    h2{page-break-before:always}
+    h2:first-of-type{page-break-before:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>QRCerts — Documentación de Cambios</h1>
+<span class="date">Sesión del 6 de Abril de 2026</span>
+
+<div class="toc">
+  <h3>Índice</h3>
+  <ol>
+    <li><a href="#bugs">Corrección de bugs existentes</a></li>
+    <li><a href="#layout">Eliminación del bloqueo de layout</a></li>
+    <li><a href="#quota">Sistema de cuotas comerciales</a></li>
+    <li><a href="#drive">Integración Google Drive</a></li>
+    <li><a href="#plantillas">Validaciones de plantillas</a></li>
+    <li><a href="#wizard">Reorganización del wizard de cursos</a></li>
+    <li><a href="#validaciones">Validaciones de alumnos</a></li>
+    <li><a href="#frontend">Landing, manuales y páginas estáticas</a></li>
+    <li><a href="#deploy">Infraestructura y deploy</a></li>
+    <li><a href="#pendientes">Pendientes</a></li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<h2 id="bugs">1. Corrección de bugs existentes</h2>
+
+<h3>1.1 Import Excel duplicaba alumnos <span class="status done">Resuelto</span></h3>
+<p><strong>Problema:</strong> Al reimportar un Excel, se creaban registros duplicados en la tabla <code>Alumnos</code> porque <code>VerificaDuplicado()</code> solo verificaba en <code>REGISTRO_ALUMNOS</code> (inscripción al curso) pero no en <code>Alumnos</code> (tabla base).</p>
+<p><strong>Solución:</strong> Se agregó <code>AlumnosDAL.GetByOtecIdAndRut()</code> que busca el alumno por RUT + OtecId. El import ahora reutiliza alumnos existentes y solo crea nuevos cuando no existen.</p>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>DAL/AlumnosDAL.cs</code> — Nuevo método GetByOtecIdAndRut()
+  <code>Services/AlumnosService.cs</code> — CommitImportAsync ahora busca antes de crear
+  <code>Controllers/AlumnosController.cs</code> — BulkImport con misma lógica
+</div>
+
+<h3>1.2 UpdateRegistro perdía observaciones <span class="status done">Resuelto</span></h3>
+<p><strong>Problema:</strong> <code>UpdateRegistro</code> borraba y recreaba el <code>REGISTRO_ALUMNOS</code> sin pasar las observaciones, perdiendo los datos de variables del certificado.</p>
+<p><strong>Solución:</strong> Se reemplazó delete+insert por un UPDATE que preserva los datos.</p>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>DAL/REGISTRO_ALUMNOS.cs</code> — Nuevo método Update()
+  <code>Controllers/AlumnosController.cs</code> — UpdateRegistro usa Update en vez de delete+insert
+  <code>DTOs/19SharedDTOs.cs</code> — Agregado campo observaciones a UpdateAlumnoRegistroRequest
+</div>
+
+<h3>1.3 SQL roto en CertificadoDAL.update <span class="status done">Resuelto</span></h3>
+<p><strong>Problema:</strong> El SQL tenía un paréntesis sobrante (<code>UPDATE Certificados(</code>) y usaba coma en vez de AND en el WHERE.</p>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>DAL/CertificadoDAL.cs</code> — SQL corregido
+</div>
+
+<!-- ============================================ -->
+<h2 id="layout">2. Eliminación del bloqueo de layout</h2>
+<span class="status done">Resuelto</span>
+
+<p><strong>Problema:</strong> <code>IsLayoutBloqueado</code> impedía modificar cursos después de la primera emisión de certificados. Los usuarios se veían obligados a recrear cursos y resubir alumnos para hacer cambios simples como corregir un acento.</p>
+
+<p><strong>Solución:</strong> Se eliminó toda la lógica de bloqueo. El layout y todos los datos del curso son siempre editables. Los certificados ya emitidos quedan inmutables con los datos del momento de emisión.</p>
+
+<div class="section-summary">
+  <h4>Regla de negocio establecida</h4>
+  <p>Modificar un curso o alumno solo afecta certificados nuevos o re-emitidos. Los certificados ya emitidos nunca se alteran retroactivamente.</p>
+</div>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>Services/LayoutService.cs</code> — Eliminado chequeo de IsLayoutBloqueado
+  <code>Services/CursosService.cs</code> — LayoutJson siempre actualizable
+  <code>Services/UpdateCursoRequest.cs</code> — Agregado campo LayoutJson
+</div>
+
+<!-- ============================================ -->
+<h2 id="quota">3. Sistema de cuotas comerciales</h2>
+<span class="status done">Implementado</span>
+
+<p>Sistema para limitar la emisión de certificados por empresa, controlado por el administrador del sitio.</p>
+
+<h3>Modelo de datos</h3>
+<table>
+  <tr><th>Tabla</th><th>Propósito</th></tr>
+  <tr><td><code>OtecQuotaConfig</code></td><td>Toggle on/off de cuota por empresa</td></tr>
+  <tr><td><code>OrdenCompra</code></td><td>Cantidad + fecha vencimiento. Solo una activa por empresa</td></tr>
+  <tr><td><code>OrdenCompraHistorial</code></td><td>Auditoría: CREATED, SUPERSEDED, QUOTA_CONSUMED</td></tr>
+</table>
+
+<h3>Reglas de negocio</h3>
+<ul>
+  <li>Cuota OFF = emisión libre (ilimitada)</li>
+  <li>Cuota ON = solo emite con saldo disponible y orden vigente</li>
+  <li>Nueva orden reemplaza automáticamente la anterior (va al historial)</li>
+  <li>Órdenes no se editan ni cancelan</li>
+  <li>Emisiones nuevas y re-emisiones consumen cuota</li>
+  <li>Vence por cantidad agotada O fecha expirada (lo que ocurra primero)</li>
+</ul>
+
+<h3>Alertas en navbar (usuario OTEC)</h3>
+<table>
+  <tr><th>Color</th><th>Condición</th></tr>
+  <tr><td style="color:#2e7d32;font-weight:700">Verde</td><td>&gt;10 días y &lt;50% usado</td></tr>
+  <tr><td style="color:#f57f17;font-weight:700">Amarillo</td><td>&lt;7 días O &gt;70% usado</td></tr>
+  <tr><td style="color:#c62828;font-weight:700">Rojo</td><td>≤3 días O ≥90% usado</td></tr>
+</table>
+
+<h3>Endpoints API</h3>
+<table>
+  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td><code>/api/admin/otecs/{id}/quota</code></td><td>Config + orden activa</td></tr>
+  <tr><td>PUT</td><td><code>/api/admin/otecs/{id}/quota/toggle</code></td><td>Activar/desactivar</td></tr>
+  <tr><td>POST</td><td><code>/api/admin/otecs/{id}/quota/ordenes</code></td><td>Crear orden</td></tr>
+  <tr><td>GET</td><td><code>/api/admin/otecs/{id}/quota/ordenes</code></td><td>Historial de órdenes</td></tr>
+  <tr><td>GET</td><td><code>/api/admin/otecs/{id}/quota/historial</code></td><td>Auditoría</td></tr>
+  <tr><td>GET</td><td><code>/api/app/quota/status</code></td><td>Status para navbar</td></tr>
+</table>
+
+<div class="file-list">
+  <h4>Archivos creados</h4>
+  <code>Models/OtecQuotaConfig.cs, OrdenCompra.cs, OrdenCompraHistorial.cs</code>
+  <code>DAL/QuotaDAL.cs</code>
+  <code>Services/IQuotaService.cs, QuotaService.cs</code>
+  <code>DTOs/QuotaDTOs.cs</code>
+  <code>Controllers/AdminQuotaController.cs, QuotaAppController.cs</code>
+  <code>Scripts/CreateQuotaTables.sql</code> — Ejecutado en producción
+  <code>Frontend: QuotaManager.tsx, Navbar.tsx (chip de status)</code>
+</div>
+
+<!-- ============================================ -->
+<h2 id="drive">4. Integración Google Drive</h2>
+<span class="status pending">Pendiente — en progreso</span>
+
+<p>Almacenamiento de certificados PDF y plantillas .docx en Google Drive en vez de storage local del container Docker.</p>
+
+<h3>Estado actual</h3>
+<table>
+  <tr><th>Componente</th><th>Estado</th></tr>
+  <tr><td>GoogleDriveService (upload, download, move to historico)</td><td><span class="status done">Implementado</span></td></tr>
+  <tr><td>Autenticación OAuth con cuenta dedicada</td><td><span class="status done">Funcionando</span></td></tr>
+  <tr><td>API Drive habilitada en Google Cloud</td><td><span class="status done">Habilitada</span></td></tr>
+  <tr><td>Estructura de carpetas en Drive</td><td><span class="status done">Creándose on-demand</span></td></tr>
+  <tr><td>Subida de PDF al emitir certificado</td><td><span class="status pending">Falla silenciosamente — debuggear</span></td></tr>
+  <tr><td>Descarga desde Drive</td><td><span class="status reverted">Revertido al flujo original</span></td></tr>
+  <tr><td>Subida de plantillas .docx</td><td><span class="status pending">Código listo, no probado</span></td></tr>
+  <tr><td>Migración de certificados existentes</td><td><span class="status pending">Endpoint listo, no ejecutado</span></td></tr>
+  <tr><td>Mover a Historico al eliminar certificado</td><td><span class="status pending">Código listo, no probado</span></td></tr>
+</table>
+
+<h3>Estructura en Drive</h3>
+<pre>QRCerts/
+  Certificados/
+    {otec-slug}/
+      nombre-alumno_nombre-curso.pdf
+  Plantillas/
+    {otec-slug}/
+      {guid}.docx
+  Historico/
+    {otec-slug}/
+      (certificados eliminados, recuperables)</pre>
+
+<h3>Cuenta Google</h3>
+<p>Email: <code>qrcert.argentia@gmail.com</code><br>
+Proyecto Google Cloud: <code>1054590531471</code><br>
+Credenciales: OAuth2 Web Application<br>
+Token almacenado en: <code>/app/credentials/</code> dentro del container</p>
+
+<h3>Qué falta hacer</h3>
+<ol>
+  <li><strong>Debuggear la subida al emitir:</strong> El <code>CertificadosService.CreateAsync</code> tiene el código pero falla sin dejar error en logs. Posible causa: <code>GetTemplateFileNameAsync</code> devuelve null o el path del .docx no se encuentra.</li>
+  <li><strong>Reconectar la descarga desde Drive:</strong> Una vez que la subida funcione, cambiar el frontend para que descargue de Drive primero con fallback a generación al vuelo.</li>
+  <li><strong>Migrar certificados existentes:</strong> Ejecutar <code>GET /api/admin/migration/certs-to-drive?batch=50</code> en bloques.</li>
+  <li><strong>Naming de archivos en Drive:</strong> Usar formato <code>nombre-alumno_nombre-curso.pdf</code></li>
+</ol>
+
+<div class="file-list">
+  <h4>Archivos creados</h4>
+  <code>Services/GoogleDriveService.cs (IGoogleDriveService)</code>
+  <code>Controllers/AdminDriveController.cs</code>
+  <code>Controllers/AdminMigrationController.cs</code>
+  <code>DAL/ContenidoCertificadoDAL.cs</code>
+  <code>credentials/credentials.json + token</code>
+  <h4>Archivos modificados</h4>
+  <code>QRCerts.Api.csproj</code> — NuGet Google.Apis.Drive.v3
+  <code>Program.cs</code> — Registro IGoogleDriveService como Singleton
+  <code>Services/CertificadosService.cs</code> — GenerateAndUploadToDrive en CreateAsync
+  <code>Controllers/UploadController.cs</code> — Upload a Drive en generate-pdf-by-ids
+  <code>Controllers/CertificadosController.cs</code> — Download desde Drive (revertido en frontend)
+</div>
+
+<!-- ============================================ -->
+<h2 id="plantillas">5. Validaciones de plantillas</h2>
+<span class="status done">Implementado</span>
+
+<h3>Variables obligatorias</h3>
+<p>Al subir un .docx como plantilla, se valida que contenga (case sensitive):</p>
+<ul>
+  <li><code>{{NOMBRE}}</code> — fijada en tarjeta Alumno</li>
+  <li><code>{{RUT}}</code> — fijada en tarjeta Alumno</li>
+  <li><code>{{NOMBRE_CURSO}}</code> — fijada en tarjeta Curso</li>
+  <li><code>{{QR}}</code> — fijada en tarjeta Curso</li>
+</ul>
+<p>Si falta alguna, se corta el flujo y se indica cuál falta.</p>
+
+<h3>Edición de plantilla</h3>
+<p>Al reemplazar el .docx de una plantilla existente:</p>
+<ul>
+  <li>Se permiten cambios de formato y textos estáticos</li>
+  <li>No se permite agregar, eliminar ni renombrar variables</li>
+  <li>Se valida que el conjunto de variables sea idéntico al original</li>
+</ul>
+
+<h3>Clasificación drag & drop</h3>
+<p>Las variables obligatorias aparecen con candado y no se pueden mover. El resto se clasifica libremente.</p>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>Frontend: PlantillaWizard.tsx</code> — Reescrito completamente
+</div>
+
+<!-- ============================================ -->
+<h2 id="wizard">6. Reorganización del wizard de cursos</h2>
+<span class="status done">Implementado</span>
+
+<p><strong>Cambio principal:</strong> Se eliminó el paso "Cargar Alumnos" del wizard de cursos. Los alumnos se gestionan exclusivamente desde la sección Alumnos del curso.</p>
+
+<p><strong>Justificación:</strong> Tener la carga de alumnos en dos lugares (wizard de curso + pantalla de alumnos) generaba confusión e inconsistencias. Además, obligar a tener el Excel listo antes de crear el curso no refleja el flujo real de trabajo.</p>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>Frontend: CursoWizard.tsx</code> — Eliminado paso y lógica de import
+</div>
+
+<!-- ============================================ -->
+<h2 id="validaciones">7. Validaciones de alumnos</h2>
+<span class="status done">Implementado</span>
+
+<h3>Import Excel</h3>
+<ul>
+  <li>Valida columnas obligatorias: Nombre y RUT</li>
+  <li>Valida que no haya filas con Nombre o RUT vacíos</li>
+  <li>Muestra error claro indicando cantidad de filas inválidas</li>
+</ul>
+
+<h3>Alta/edición manual</h3>
+<ul>
+  <li>NOMBRE y RUT obligatorios en formulario dinámico y simple</li>
+  <li>Todos los campos dinámicos validados como no vacíos</li>
+</ul>
+
+<div class="file-list">
+  <h4>Archivos modificados</h4>
+  <code>Frontend: AlumnosList.tsx</code> — Validaciones en handleFileUpload y handleSubmit
+</div>
+
+<!-- ============================================ -->
+<h2 id="frontend">8. Landing, manuales y páginas estáticas</h2>
+<span class="status done">Implementado</span>
+
+<table>
+  <tr><th>Archivo</th><th>URL</th><th>Descripción</th></tr>
+  <tr><td><code>landing.html</code></td><td><code>https://certificadosqr.store/</code></td><td>Landing comercial QRCerts con sección DocuSafe</td></tr>
+  <tr><td><code>privacy.html</code></td><td><code>/privacy.html</code></td><td>Política de privacidad (requerida por Google OAuth)</td></tr>
+  <tr><td><code>terms.html</code></td><td><code>/terms.html</code></td><td>Términos de servicio</td></tr>
+  <tr><td><code>docusafe.html</code></td><td><code>/docusafe.html</code></td><td>Landing DocuSafe con links a Mercado Pago</td></tr>
+  <tr><td><code>pago-exitoso.html</code></td><td><code>/pago-exitoso.html</code></td><td>Página post-pago con descarga de DocuSafe Full</td></tr>
+  <tr><td><code>manual-otec.html</code></td><td><code>/manual-otec.html</code></td><td>Manual de usuario para empresas</td></tr>
+  <tr><td><code>manual-admin.html</code></td><td><code>/manual-admin.html</code></td><td>Manual de administrador del sistema</td></tr>
+  <tr><td><code>presentacion.html</code></td><td>Local</td><td>Presentación interna con pestañas Empresa/Admin</td></tr>
+  <tr><td><code>CASOS_DE_USO.md</code></td><td>Local</td><td>19 casos de uso documentados</td></tr>
+</table>
+
+<h3>Navbar</h3>
+<ul>
+  <li>Botón "Ingresar" en landing que lleva a <code>/app/#/otec/login</code></li>
+  <li>Botón "Ayuda" en la app que lleva al manual según el rol (admin/otec)</li>
+  <li>Botón de contacto por WhatsApp: +54 9 3512 11-9822</li>
+  <li>Chip de cuota con colores en la navbar del usuario OTEC</li>
+</ul>
+
+<h3>DocuSafe en Mercado Pago</h3>
+<ul>
+  <li>Plan mensual: <code>preapproval_plan_id=1257d6194a0843dc94325f3d90360f73</code></li>
+  <li>Plan anual: <code>preapproval_plan_id=a53c530759ee494d8d8fb4405c2a8da7</code></li>
+  <li>URL retorno exitoso: <code>https://certificadosqr.store/pago-exitoso.html</code></li>
+</ul>
+
+<!-- ============================================ -->
+<h2 id="deploy">9. Infraestructura y deploy</h2>
+
+<h3>Estructura del servidor confirmada</h3>
+<pre>/root/qrcerts/
+  Dockerfile          ← Multi-stage (pero producción usa publish/)
+  docker-compose.yml  ← sqlserver + qrcerts-app
+  publish/            ← Backend compilado (.dll)
+    wwwroot/          ← Archivos estáticos
+      app/            ← Frontend React (dist)
+  uploads/            ← Volume montado (plantillas .docx + imágenes)</pre>
+
+<h3>Flujo de deploy correcto</h3>
+<ol>
+  <li>Local: <code>dotnet publish -c Release -o ../publish</code></li>
+  <li>FileZilla: subir <code>publish/QRCerts.Api.dll</code> + <code>.pdb</code> a <code>/root/qrcerts/publish/</code></li>
+  <li>FileZilla: subir frontend <code>dist/</code> a <code>/root/qrcerts/publish/wwwroot/app/</code></li>
+  <li>FileZilla: subir estáticos a <code>/root/qrcerts/publish/wwwroot/</code></li>
+  <li>SSH: <code>cd /root/qrcerts && docker compose up -d --build --no-deps qrcerts-app</code></li>
+  <li><strong>No pisar</strong> <code>appsettings.json</code> de producción</li>
+</ol>
+
+<h3>Conexión a BD desde el container</h3>
+<p>El <code>DALBase</code> lee de <code>appsettings.json</code> (no de variables de entorno). La connection string de producción es:</p>
+<pre>Server=sqlserver,1433;Database=QRCerts;User Id=sa;Password=QRCerts2024!Strong;TrustServerCertificate=True</pre>
+
+<h3>Google Cloud Console</h3>
+<ul>
+  <li>Proyecto ID: <code>1054590531471</code></li>
+  <li>API Drive: habilitada</li>
+  <li>OAuth: Web Application con redirect URIs en localhost</li>
+  <li>Estado: Testing (usuarios de prueba autorizados)</li>
+</ul>
+
+<!-- ============================================ -->
+<h2 id="pendientes">10. Pendientes para próxima sesión</h2>
+
+<table>
+  <tr><th>#</th><th>Tarea</th><th>Prioridad</th><th>Detalle</th></tr>
+  <tr><td>1</td><td><strong>Debuggear subida a Drive al emitir</strong></td><td><span class="status pending">Alta</span></td><td>CertificadosService.CreateAsync genera PDF pero falla al subir. Posible: GetTemplateFileNameAsync devuelve null o path incorrecto</td></tr>
+  <tr><td>2</td><td><strong>Conectar descarga desde Drive</strong></td><td><span class="status pending">Alta</span></td><td>Una vez que la subida funcione, el frontend debe intentar descargar de Drive primero</td></tr>
+  <tr><td>3</td><td><strong>Migración de certificados existentes</strong></td><td><span class="status pending">Media</span></td><td>~3500 certificados reales. Endpoint listo: /api/admin/migration/certs-to-drive?batch=50</td></tr>
+  <tr><td>4</td><td><strong>Nombre de archivo en Drive</strong></td><td><span class="status pending">Media</span></td><td>Confirmar que se usa formato nombre-alumno_nombre-curso.pdf</td></tr>
+  <tr><td>5</td><td><strong>Carpeta "default" en Drive</strong></td><td><span class="status pending">Baja</span></td><td>Los certificados se guardan en Certificados/default/ en vez del slug del OTEC. El claim otec_id no se lee correctamente</td></tr>
+  <tr><td>6</td><td><strong>CI/CD</strong></td><td><span class="status pending">Baja</span></td><td>Automatizar deploy para no depender de FileZilla + SSH manual</td></tr>
+</table>
+
+<div class="section-summary" style="margin-top:32px">
+  <h4>Estado general del sistema</h4>
+  <p><strong>Producción estable.</strong> Las funcionalidades core (plantillas, cursos, alumnos, emisión, descarga, verificación QR) están funcionando correctamente con el flujo original. La integración con Drive está parcialmente implementada pero no afecta el funcionamiento actual — los try/catch aseguran que si Drive falla, todo sigue operando como antes.</p>
+</div>
+
+</div>
+</body>
+</html>

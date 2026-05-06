@@ -1,0 +1,68 @@
+# =====================================================
+# .NET
+# =====================================================
+bin/
+obj/
+publish/
+*.pdb
+*.user
+*.suo
+.vs/
+.vscode/
+
+# =====================================================
+# Node / Frontend
+# =====================================================
+node_modules/
+dist/
+
+# =====================================================
+# Variables de entorno (cada server tiene las suyas)
+# =====================================================
+.env
+.env.local
+.env.*.local
+*.local.backup
+
+# =====================================================
+# Secretos / config con datos sensibles
+# (cada server tiene los suyos, NUNCA al repo)
+# =====================================================
+QRCerts.Api/appsettings*.json
+!QRCerts.Api/appsettings.example.json
+QRCerts.Api/credentials/
+*.pem
+*.key
+
+# =====================================================
+# Datos de cliente (no son codigo)
+# =====================================================
+QRCerts.Api/wwwroot/uploads/docx/*.docx
+QRCerts.Api/wwwroot/uploads/images/*
+
+# =====================================================
+# Build artifacts / archivos de deploy
+# =====================================================
+*.tar
+*.tar.gz
+*.zip
+publish/
+
+# =====================================================
+# Decompilado (referencia historica, pesa demasiado)
+# =====================================================
+Decompilado/
+
+# =====================================================
+# Tempos / scratch
+# =====================================================
+temp_*.txt
+*.tmp
+nul
+
+# =====================================================
+# OS
+# =====================================================
+.DS_Store
+Thumbs.db
+desktop.ini

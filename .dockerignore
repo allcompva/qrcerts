@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Node
+**/node_modules
+**/dist
+**/.npm
+
+# .NET
+**/bin
+**/obj
+**/.vs
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore

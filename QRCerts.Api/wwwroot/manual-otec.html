@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Usuario — QRCerts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.8}
+
+  .sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;background:#0f172a;color:#e2e8f0;overflow-y:auto;padding:24px 0}
+  .sidebar-header{padding:0 24px 24px;border-bottom:1px solid #1e293b}
+  .sidebar-header h2{font-size:1.2rem;font-weight:800;color:#14b8a6}
+  .sidebar-header p{font-size:0.75rem;color:#64748b;margin-top:4px}
+  .nav-section{padding:16px 0}
+  .nav-section-title{padding:0 24px;font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:700;margin-bottom:8px}
+  .nav-link{display:block;padding:8px 24px;color:#94a3b8;text-decoration:none;font-size:0.88rem;transition:all .2s;border-left:3px solid transparent}
+  .nav-link:hover{color:#f1f5f9;background:rgba(255,255,255,0.05);border-left-color:#14b8a6}
+
+  .content{margin-left:280px;padding:48px 64px;max-width:900px}
+  h1{font-size:2rem;font-weight:800;color:#0f172a;margin-bottom:8px}
+  .subtitle{color:#64748b;font-size:1rem;margin-bottom:40px}
+  h2{font-size:1.4rem;font-weight:700;color:#0f766e;margin:48px 0 16px;padding-top:24px;border-top:1px solid #e2e8f0}
+  h2:first-of-type{border-top:none;margin-top:0}
+  h3{font-size:1.1rem;font-weight:600;color:#334155;margin:24px 0 12px}
+  p{margin-bottom:16px;font-size:0.95rem}
+  ol,ul{margin-bottom:16px;padding-left:24px}
+  li{margin-bottom:8px;font-size:0.95rem}
+
+  .step-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative;padding-left:56px}
+  .step-box::before{content:attr(data-step);position:absolute;left:16px;top:20px;width:28px;height:28px;border-radius:50%;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700}
+  .step-box h4{font-size:0.95rem;font-weight:600;color:#0f172a;margin-bottom:4px}
+  .step-box p{margin-bottom:0;color:#64748b;font-size:0.88rem}
+
+  .tip{background:#f0fdfa;border-left:4px solid #14b8a6;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .tip strong{color:#0f766e}
+
+  .warning{background:#fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .warning strong{color:#92400e}
+
+  .danger{background:#fee2e2;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:0.9rem}
+  .danger strong{color:#991b1b}
+
+  code{background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:0.85rem;color:#0f766e}
+
+  .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+  .tag-obligatorio{background:#fee2e2;color:#991b1b}
+  .tag-opcional{background:#dbeafe;color:#1e40af}
+
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .content{margin-left:0;padding:24px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>QRCerts</h2>
+    <p>Manual de Usuario</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Inicio</div>
+    <a href="#acceso" class="nav-link">Acceso al sistema</a>
+    <a href="#dashboard" class="nav-link">Panel principal</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Plantillas</div>
+    <a href="#plantilla-crear" class="nav-link">Crear plantilla</a>
+    <a href="#plantilla-variables" class="nav-link">Variables obligatorias</a>
+    <a href="#plantilla-clasificar" class="nav-link">Clasificar variables</a>
+    <a href="#plantilla-editar" class="nav-link">Editar plantilla</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Cursos</div>
+    <a href="#curso-crear" class="nav-link">Crear curso</a>
+    <a href="#curso-editar" class="nav-link">Editar curso</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Alumnos</div>
+    <a href="#alumno-excel" class="nav-link">Importar desde Excel</a>
+    <a href="#alumno-manual" class="nav-link">Carga manual</a>
+    <a href="#alumno-moodle" class="nav-link">Importar desde Moodle</a>
+    <a href="#alumno-editar" class="nav-link">Editar alumno</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Certificados</div>
+    <a href="#cert-emitir" class="nav-link">Emitir certificados</a>
+    <a href="#cert-descargar" class="nav-link">Descargar</a>
+    <a href="#cert-reemitir" class="nav-link">Corregir y re-emitir</a>
+    <a href="#cert-verificar" class="nav-link">Verificación QR</a>
+  </div>
+</nav>
+
+<main class="content">
+  <h1>Manual de Usuario</h1>
+  <p class="subtitle">Guía completa para gestionar plantillas, cursos, alumnos y certificados en QRCerts.</p>
+
+  <!-- ACCESO -->
+  <h2 id="acceso">Acceso al sistema</h2>
+  <p>Ingrese a <a href="https://certificadosqr.store/app/#/otec/login">certificadosqr.store</a> con el usuario y contraseña proporcionados por el administrador.</p>
+
+  <!-- DASHBOARD -->
+  <h2 id="dashboard">Panel principal</h2>
+  <p>Desde el menú superior acceda a:</p>
+  <ul>
+    <li><strong>Mis Cursos</strong> — gestionar cursos, alumnos y certificados</li>
+    <li><strong>Moodle</strong> — importar desde Moodle (si está habilitado)</li>
+    <li><strong>Ayuda</strong> — este manual</li>
+  </ul>
+
+  <!-- PLANTILLAS -->
+  <h2 id="plantilla-crear">Crear una plantilla</h2>
+  <p>Una plantilla es el documento Word (.docx) que sirve como modelo para todos los certificados de los cursos que la utilicen.</p>
+
+  <h3 id="plantilla-variables">Variables obligatorias</h3>
+  <p>El documento debe contener las siguientes variables exactamente como se muestran (respetando mayúsculas):</p>
+  <ul>
+    <li><code>{{NOMBRE}}</code> <span class="tag tag-obligatorio">Obligatoria</span> — Nombre completo del alumno</li>
+    <li><code>{{RUT}}</code> <span class="tag tag-obligatorio">Obligatoria</span> — Identificación del alumno</li>
+    <li><code>{{NOMBRE_CURSO}}</code> <span class="tag tag-obligatorio">Obligatoria</span> — Nombre del curso</li>
+    <li><code>{{QR}}</code> <span class="tag tag-obligatorio">Obligatoria</span> — Código QR de verificación</li>
+  </ul>
+  <p>Además, puede agregar cualquier otra variable personalizada, por ejemplo:</p>
+  <ul>
+    <li><code>{{INSTRUCTOR}}</code> <span class="tag tag-opcional">Opcional</span></li>
+    <li><code>{{HORAS}}</code> <span class="tag tag-opcional">Opcional</span></li>
+    <li><code>{{FECHA_CURSO}}</code> <span class="tag tag-opcional">Opcional</span></li>
+    <li><code>{{CALIFICACION}}</code> <span class="tag tag-opcional">Opcional</span></li>
+  </ul>
+
+  <div class="warning">
+    <strong>Importante:</strong> Las variables son case sensitive. <code>{{nombre}}</code> no es lo mismo que <code>{{NOMBRE}}</code>. Use exactamente el formato indicado.
+  </div>
+
+  <h3>Pasos para crear una plantilla</h3>
+  <div class="step-box" data-step="1">
+    <h4>Datos básicos</h4>
+    <p>Ingrese un nombre descriptivo y seleccione el tipo de certificado (horizontal o vertical).</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Subir documento Word</h4>
+    <p>Cargue el archivo .docx. El sistema analizará el documento y extraerá todas las variables detectadas. Si falta alguna variable obligatoria, se lo indicará.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4 id="plantilla-clasificar">Clasificar variables</h4>
+    <p>Arrastre cada variable al grupo correspondiente:</p>
+  </div>
+
+  <ul>
+    <li><strong>Variables de Curso</strong> — Se completan una vez al crear el curso. Ejemplo: instructor, horas, fecha del curso. Estas variables generan campos en el formulario de alta de curso.</li>
+    <li><strong>Variables de Alumno</strong> — Cambian para cada alumno. Ejemplo: nombre, RUT, calificación. Estas variables definen las columnas del Excel de importación.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Nota:</strong> Las variables NOMBRE y RUT quedan fijadas automáticamente como variables de alumno. NOMBRE_CURSO y QR quedan fijadas como variables de curso. No se pueden mover.
+  </div>
+
+  <h3 id="plantilla-editar">Editar una plantilla</h3>
+  <p>Puede reemplazar el archivo .docx de una plantilla existente, pero con restricciones:</p>
+  <ul>
+    <li>Se permiten cambios de formato, diseño y textos estáticos.</li>
+    <li><strong>No se permite</strong> agregar, eliminar ni renombrar variables.</li>
+  </ul>
+  <div class="danger">
+    <strong>Atención:</strong> Alterar las variables de una plantilla en uso rompería la consistencia de los cursos y alumnos que la utilizan. Si necesita variables diferentes, cree una plantilla nueva.
+  </div>
+
+  <!-- CURSOS -->
+  <h2 id="curso-crear">Crear un curso</h2>
+  <div class="step-box" data-step="1">
+    <h4>Datos básicos</h4>
+    <p>Nombre de referencia (interno), nombre a mostrar en el certificado y tipo.</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Seleccionar plantilla</h4>
+    <p>Elija la plantilla de certificado. Si la plantilla tiene variables de curso, aparecerá un paso adicional para completarlas.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4>Variables de curso (si aplica)</h4>
+    <p>Complete los valores de las variables clasificadas como "de curso" (ej: instructor, cantidad de horas). Estos valores se aplicarán a todos los certificados del curso.</p>
+  </div>
+
+  <div class="tip">
+    <strong>Nota:</strong> Los alumnos se cargan después desde la sección Alumnos del curso, no durante la creación.
+  </div>
+
+  <h3 id="curso-editar">Editar un curso</h3>
+  <p>Puede modificar cualquier dato del curso en cualquier momento sin restricciones. Los cambios solo afectan a certificados nuevos o re-emitidos. Los certificados ya emitidos no se alteran.</p>
+
+  <!-- ALUMNOS -->
+  <h2 id="alumno-excel">Importar alumnos desde Excel</h2>
+  <p>Desde la pantalla de alumnos del curso:</p>
+  <div class="step-box" data-step="1">
+    <h4>Preparar el Excel</h4>
+    <p>El archivo debe tener columnas que coincidan con las variables de alumno de la plantilla. Las columnas <strong>Nombre</strong> (o NOMBRE) y <strong>RUT</strong> son obligatorias.</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Subir el archivo</h4>
+    <p>Haga clic en "Importar Excel" y seleccione el archivo .xlsx.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4>Confirmar la carga</h4>
+    <p>Revise la previsualización y confirme.</p>
+  </div>
+
+  <div class="tip">
+    <strong>Sin duplicados:</strong> Si un alumno ya existe (mismo RUT), se actualizan sus datos. Si ya está inscrito en el curso, se omite. Puede reimportar el Excel cuantas veces quiera.
+  </div>
+
+  <h3 id="alumno-manual">Carga manual de alumnos</h3>
+  <p>Haga clic en "Agregar alumno" y complete los campos. Los campos disponibles dependen de la plantilla del curso. NOMBRE y RUT son siempre obligatorios.</p>
+
+  <h3 id="alumno-moodle">Importar desde Moodle</h3>
+  <p>Si su empresa tiene Moodle habilitado:</p>
+  <ol>
+    <li>Vaya a la sección Moodle desde el menú</li>
+    <li>Configure la conexión (URL + Token API) — solo la primera vez</li>
+    <li>Seleccione el curso de Moodle</li>
+    <li>Mapee los campos de Moodle a las variables de la plantilla</li>
+    <li>Importe los alumnos</li>
+  </ol>
+
+  <h3 id="alumno-editar">Editar un alumno</h3>
+  <p>Desde la lista de alumnos, haga clic en el ícono de edición. Puede modificar cualquier campo. Los cambios solo afectan a certificados nuevos o re-emitidos.</p>
+
+  <!-- CERTIFICADOS -->
+  <h2 id="cert-emitir">Emitir certificados</h2>
+  <div class="step-box" data-step="1">
+    <h4>Ir a Certificados</h4>
+    <p>Desde la lista de cursos, haga clic en "Certificados" del curso deseado.</p>
+  </div>
+  <div class="step-box" data-step="2">
+    <h4>Seleccionar alumnos</h4>
+    <p>Marque los alumnos a los que desea emitir certificado.</p>
+  </div>
+  <div class="step-box" data-step="3">
+    <h4>Emitir</h4>
+    <p>Haga clic en "Emitir". El sistema genera el PDF con los datos del alumno y del curso, inserta el código QR de verificación y lo almacena en la nube.</p>
+  </div>
+
+  <h3 id="cert-descargar">Descargar certificados</h3>
+  <ul>
+    <li><strong>Individual:</strong> Haga clic en el ícono de descarga del alumno.</li>
+    <li><strong>Masiva:</strong> Seleccione varios alumnos y haga clic en "Descargar ZIP".</li>
+  </ul>
+  <p>El nombre del archivo sigue el formato: <code>nombre-alumno_nombre-curso.pdf</code></p>
+
+  <h3 id="cert-reemitir">Corregir y re-emitir</h3>
+  <p>Si necesita corregir un certificado:</p>
+  <ol>
+    <li>Modifique los datos del alumno o del curso según corresponda</li>
+    <li>Elimine el certificado existente</li>
+    <li>Vuelva a emitirlo</li>
+  </ol>
+  <div class="warning">
+    <strong>Importante:</strong> El certificado eliminado queda invalidado. Su código QR reportará "NO VÁLIDO". El nuevo certificado se genera con los datos vigentes al momento de la re-emisión.
+  </div>
+
+  <h3 id="cert-verificar">Verificación por QR</h3>
+  <p>Cualquier persona puede verificar un certificado escaneando el código QR con la cámara de su celular. Se abre una página pública que muestra:</p>
+  <ul>
+    <li>Estado del certificado (VÁLIDO / NO VÁLIDO)</li>
+    <li>Nombre del alumno</li>
+    <li>RUT</li>
+    <li>Fecha de emisión</li>
+  </ul>
+  <p>No requiere login, registro ni aplicación especial.</p>
+
+</main>
+</body>
+</html>

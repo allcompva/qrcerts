@@ -1,0 +1,94 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: AspNetCoreGeneratedDocument.Views_Verify_Verify
+// Assembly: QRCerts.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: 727CB6D4-E29D-47B1-9E4A-93BB4836AB5B
+// Assembly location: C:\Users\allco\Downloads\QRCerts_full\src\QRCerts.Api\bin\Release\net8.0\publish\QRCerts.Api.dll
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
+using Microsoft.AspNetCore.Mvc.Razor.TagHelpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.Hosting;
+using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Primitives;
+using QRCerts.Api.Controllers;
+using System;
+using System.Runtime.CompilerServices;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
+#nullable enable
+namespace AspNetCoreGeneratedDocument
+{
+  [RazorCompiledItemMetadata("Identifier", "/Views/Verify/Verify.cshtml")]
+  [CreateNewOnMetadataUpdate]
+  internal sealed class Views_Verify_Verify : RazorPage<VerifyController.VerifyVm>
+  {
+    private 
+    #nullable disable
+    TagHelperExecutionContext __tagHelperExecutionContext;
+    private TagHelperRunner __tagHelperRunner = new TagHelperRunner();
+    private string __tagHelperStringValueBuffer;
+    private TagHelperScopeManager __backed__tagHelperScopeManager;
+    private HeadTagHelper __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_HeadTagHelper;
+    private BodyTagHelper __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper;
+
+    private TagHelperScopeManager __tagHelperScopeManager
+    {
+      get
+      {
+        if (this.__backed__tagHelperScopeManager == null)
+          this.__backed__tagHelperScopeManager = new TagHelperScopeManager(new Action<HtmlEncoder>(((RazorPageBase) this).StartTagHelperWritingScope), new Func<TagHelperContent>(((RazorPageBase) this).EndTagHelperWritingScope));
+        return this.__backed__tagHelperScopeManager;
+      }
+    }
+
+    public override async Task ExecuteAsync()
+    {
+      Views_Verify_Verify viewsVerifyVerify = this;
+      viewsVerifyVerify.Layout = (string) null;
+      viewsVerifyVerify.Context.Response.Headers["X-Robots-Tag"] = (StringValues) "noindex, noarchive, noimageindex";
+      viewsVerifyVerify.WriteLiteral("<!DOCTYPE html>\n<html lang=\"es\">\n");
+      // ISSUE: reference to a compiler-generated method
+      viewsVerifyVerify.__tagHelperExecutionContext = viewsVerifyVerify.__tagHelperScopeManager.Begin("head", TagMode.StartTagAndEndTag, "349a270c9056ff5f6a66a740ae2f6ece311784cfb7d66608e0afef7c524dab7e3476", new Func<Task>(viewsVerifyVerify.\u003CExecuteAsync\u003Eb__8_0));
+      viewsVerifyVerify.__Microsoft_AspNetCore_Mvc_Razor_TagHelpers_HeadTagHelper = viewsVerifyVerify.CreateTagHelper<HeadTagHelper>();
+      viewsVerifyVerify.__tagHelperExecutionContext.Add((ITagHelper) viewsVerifyVerify.__Microsoft_AspNetCore_Mvc_Razor_TagHelpers_HeadTagHelper);
+      await viewsVerifyVerify.__tagHelperRunner.RunAsync(viewsVerifyVerify.__tagHelperExecutionContext);
+      if (!viewsVerifyVerify.__tagHelperExecutionContext.Output.IsContentModified)
+        await viewsVerifyVerify.__tagHelperExecutionContext.SetOutputContentAsync();
+      viewsVerifyVerify.Write((object) viewsVerifyVerify.__tagHelperExecutionContext.Output);
+      viewsVerifyVerify.__tagHelperExecutionContext = viewsVerifyVerify.__tagHelperScopeManager.End();
+      viewsVerifyVerify.WriteLiteral("\n");
+      // ISSUE: reference to a compiler-generated method
+      viewsVerifyVerify.__tagHelperExecutionContext = viewsVerifyVerify.__tagHelperScopeManager.Begin("body", TagMode.StartTagAndEndTag, "349a270c9056ff5f6a66a740ae2f6ece311784cfb7d66608e0afef7c524dab7e5914", new Func<Task>(viewsVerifyVerify.\u003CExecuteAsync\u003Eb__8_1));
+      viewsVerifyVerify.__Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper = viewsVerifyVerify.CreateTagHelper<BodyTagHelper>();
+      viewsVerifyVerify.__tagHelperExecutionContext.Add((ITagHelper) viewsVerifyVerify.__Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper);
+      await viewsVerifyVerify.__tagHelperRunner.RunAsync(viewsVerifyVerify.__tagHelperExecutionContext);
+      if (!viewsVerifyVerify.__tagHelperExecutionContext.Output.IsContentModified)
+        await viewsVerifyVerify.__tagHelperExecutionContext.SetOutputContentAsync();
+      viewsVerifyVerify.Write((object) viewsVerifyVerify.__tagHelperExecutionContext.Output);
+      viewsVerifyVerify.__tagHelperExecutionContext = viewsVerifyVerify.__tagHelperScopeManager.End();
+      viewsVerifyVerify.WriteLiteral("\n</html>\n");
+    }
+
+    [RazorInject]
+    public 
+    #nullable enable
+    IModelExpressionProvider ModelExpressionProvider { get; private set; }
+
+    [RazorInject]
+    public IUrlHelper Url { get; private set; }
+
+    [RazorInject]
+    public IViewComponentHelper Component { get; private set; }
+
+    [RazorInject]
+    public IJsonHelper Json { get; private set; }
+
+    [RazorInject]
+    public IHtmlHelper<VerifyController.VerifyVm> Html { get; private set; }
+  }
+}

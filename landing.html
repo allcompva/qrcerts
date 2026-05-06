@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRCerts — Certificados Digitales Verificables</title>
+<meta name="description" content="Plataforma de certificados digitales con verificación QR instantánea para empresas de capacitación.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:#1e293b;line-height:1.7;overflow-x:hidden}
+
+  /* NAV */
+  nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid #e2e8f0;padding:16px 0;transition:box-shadow .3s}
+  nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.08)}
+  .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center}
+  .logo{font-size:1.5rem;font-weight:800;color:#0f766e;letter-spacing:-0.5px}
+  .logo span{color:#0d9488}
+  .nav-links{display:flex;gap:32px;align-items:center}
+  .nav-links a{color:#475569;text-decoration:none;font-size:0.9rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:#0f766e}
+  .btn-nav{background:#0f766e;color:#fff!important;padding:10px 24px;border-radius:8px;font-weight:600;transition:background .2s}
+  .btn-nav:hover{background:#0d9488}
+
+  /* HERO */
+  .hero{padding:160px 24px 100px;text-align:center;background:linear-gradient(135deg,#f0fdfa 0%,#fff 40%,#f0f9ff 100%);position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(20,184,166,0.08) 0%,transparent 70%);border-radius:50%}
+  .hero::after{content:'';position:absolute;bottom:-150px;left:-150px;width:400px;height:400px;background:radial-gradient(circle,rgba(14,165,233,0.06) 0%,transparent 70%);border-radius:50%}
+  .hero>*{position:relative;z-index:1}
+  .hero-tag{display:inline-block;padding:8px 20px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:24px;font-size:0.85rem;color:#0f766e;font-weight:600;margin-bottom:28px;letter-spacing:0.3px}
+  .hero h1{font-size:3.8rem;font-weight:900;line-height:1.1;color:#0f172a;margin-bottom:24px;letter-spacing:-1.5px}
+  .hero h1 em{font-style:normal;background:linear-gradient(135deg,#0f766e,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.25rem;color:#64748b;max-width:620px;margin:0 auto 40px;line-height:1.8}
+  .hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn-primary{background:#0f766e;color:#fff;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:700;font-size:1rem;transition:all .3s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer}
+  .btn-primary:hover{background:#0d9488;transform:translateY(-2px);box-shadow:0 8px 25px rgba(15,118,110,0.3)}
+  .btn-secondary{background:#fff;color:#0f766e;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:700;font-size:1rem;border:2px solid #99f6e4;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+  .btn-secondary:hover{background:#f0fdfa;transform:translateY(-2px)}
+  .hero-proof{margin-top:60px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+  .proof-item{text-align:center}
+  .proof-number{font-size:2.2rem;font-weight:800;color:#0f766e}
+  .proof-label{font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+  /* SECTION */
+  section{padding:100px 24px}
+  .container{max-width:1100px;margin:0 auto}
+  .section-tag{display:inline-block;padding:6px 16px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:20px;font-size:0.8rem;color:#0f766e;font-weight:600;margin-bottom:16px;letter-spacing:0.5px}
+  .section-title{font-size:2.5rem;font-weight:800;color:#0f172a;margin-bottom:16px;letter-spacing:-0.8px}
+  .section-subtitle{font-size:1.1rem;color:#64748b;max-width:550px;line-height:1.8}
+  .section-header{margin-bottom:56px}
+
+  /* HOW IT WORKS */
+  .how{background:#f8fafc}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;counter-reset:step}
+  .step{text-align:center;position:relative;counter-increment:step}
+  .step::before{content:counter(step);display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;font-size:1.3rem;font-weight:800;margin:0 auto 20px}
+  .step:not(:last-child)::after{content:'';position:absolute;top:28px;left:calc(50% + 36px);width:calc(100% - 72px);height:2px;background:linear-gradient(90deg,#14b8a6,#e2e8f0)}
+  .step h3{font-size:1.05rem;font-weight:700;color:#0f172a;margin-bottom:8px}
+  .step p{font-size:0.88rem;color:#64748b;line-height:1.6}
+
+  /* FEATURES */
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .feature{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:36px;transition:all .3s;position:relative;overflow:hidden}
+  .feature:hover{border-color:#99f6e4;transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.06)}
+  .feature-icon{width:52px;height:52px;border-radius:14px;background:#f0fdfa;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:20px}
+  .feature h3{font-size:1.1rem;font-weight:700;color:#0f172a;margin-bottom:10px}
+  .feature p{font-size:0.9rem;color:#64748b;line-height:1.7}
+  .feature-badge{position:absolute;top:16px;right:16px;padding:4px 10px;background:#dbeafe;color:#1d4ed8;font-size:0.7rem;font-weight:700;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px}
+
+  /* MOODLE */
+  .moodle-section{background:linear-gradient(135deg,#f0f9ff 0%,#f0fdfa 100%)}
+  .moodle-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .moodle-visual{background:#fff;border-radius:20px;padding:40px;border:1px solid #e2e8f0;box-shadow:0 8px 30px rgba(0,0,0,0.04)}
+  .moodle-flow{display:flex;flex-direction:column;gap:20px}
+  .moodle-flow-item{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;transition:all .3s}
+  .moodle-flow-item:hover{background:#f0fdfa;border-color:#99f6e4}
+  .moodle-flow-icon{width:40px;height:40px;border-radius:10px;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+  .moodle-flow-text h4{font-size:0.95rem;font-weight:600;color:#0f172a;margin-bottom:2px}
+  .moodle-flow-text p{font-size:0.82rem;color:#64748b}
+
+  /* QR */
+  .qr-section{background:#0f172a;color:#fff}
+  .qr-section .section-tag{background:rgba(20,184,166,0.15);border-color:rgba(20,184,166,0.3);color:#5eead4}
+  .qr-section .section-title{color:#f1f5f9}
+  .qr-section .section-subtitle{color:#94a3b8}
+  .qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px}
+  .qr-card{background:rgba(30,41,59,0.6);border:1px solid #334155;border-radius:16px;padding:32px;text-align:center}
+  .qr-card-icon{font-size:2.5rem;margin-bottom:16px}
+  .qr-card h3{font-size:1.05rem;font-weight:600;color:#f1f5f9;margin-bottom:8px}
+  .qr-card p{font-size:0.85rem;color:#94a3b8;line-height:1.6}
+
+  /* PRICING TEASER */
+  .pricing{background:#f0fdfa}
+  .pricing-card{max-width:600px;margin:0 auto;background:#fff;border:2px solid #14b8a6;border-radius:20px;padding:48px;text-align:center;position:relative;overflow:hidden}
+  .pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0f766e,#14b8a6,#0ea5e9)}
+  .pricing-card h3{font-size:1.8rem;font-weight:800;color:#0f172a;margin-bottom:12px}
+  .pricing-card .price-desc{font-size:1.05rem;color:#64748b;margin-bottom:32px}
+  .pricing-features{text-align:left;margin-bottom:36px}
+  .pricing-features li{padding:10px 0;font-size:0.95rem;color:#334155;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f1f5f9}
+  .pricing-features li::before{content:'✓';color:#0f766e;font-weight:800;font-size:1.1rem}
+
+  /* CTA */
+  .cta{text-align:center;background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff;padding:80px 24px}
+  .cta h2{font-size:2.5rem;font-weight:800;margin-bottom:16px}
+  .cta p{font-size:1.15rem;opacity:0.9;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+  .btn-cta{background:#fff;color:#0f766e;padding:18px 40px;border-radius:12px;text-decoration:none;font-weight:700;font-size:1.05rem;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+  .btn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.2)}
+
+  /* FOOTER */
+  footer{background:#0f172a;color:#94a3b8;padding:48px 24px;text-align:center}
+  footer a{color:#14b8a6;text-decoration:none}
+  footer p{font-size:0.85rem}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .hero h1{font-size:2.4rem}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .step:not(:last-child)::after{display:none}
+    .features-grid{grid-template-columns:1fr}
+    .moodle-grid{grid-template-columns:1fr}
+    .qr-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero-proof{gap:24px}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="logo">QR<span>Certs</span></div>
+    <div class="nav-links">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#moodle">Moodle</a>
+      <a href="#verificacion">Verificación QR</a>
+      <a href="#docusafe" style="color:#fb7185">DocuSafe</a>
+      <a href="/privacy.html" style="font-size:0.8rem">Privacidad</a>
+      <a href="#contacto" class="btn-nav">Solicitar demo</a>
+      <a href="/app/#/otec/login" style="background:#fff;color:#0f766e;padding:10px 24px;border-radius:8px;font-weight:600;border:2px solid #0f766e;text-decoration:none;font-size:0.9rem;transition:all .2s">Ingresar</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Plataforma de certificación digital</div>
+  <h1>Certificados digitales<br>con verificación <em>instantánea</em></h1>
+  <p>Generá, gestioná y verificá certificados de capacitación con código QR. Tus alumnos reciben un certificado profesional verificable en segundos.</p>
+  <div class="hero-buttons">
+    <a href="#contacto" class="btn-primary">Comenzar ahora →</a>
+    <a href="#como-funciona" class="btn-secondary">Ver cómo funciona</a>
+  </div>
+  <div class="hero-proof">
+    <div class="proof-item">
+      <div class="proof-number">5.000+</div>
+      <div class="proof-label">Certificados emitidos</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-number">100%</div>
+      <div class="proof-label">Verificables por QR</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-number">&lt;30s</div>
+      <div class="proof-label">Tiempo de emisión</div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="how" id="como-funciona">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-tag">Simple y rápido</div>
+      <h2 class="section-title">4 pasos para certificar</h2>
+      <p class="section-subtitle" style="margin:0 auto">De tu plantilla Word a un certificado verificable en minutos</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h3>Subí tu plantilla</h3>
+        <p>Cargá tu certificado en Word (.docx) con las variables que necesites. Tu diseño, tu marca.</p>
+      </div>
+      <div class="step">
+        <h3>Creá el curso</h3>
+        <p>Definí el nombre, los datos del curso y las variables que van a cambiar por alumno.</p>
+      </div>
+      <div class="step">
+        <h3>Cargá los alumnos</h3>
+        <p>Importá desde Excel, desde Moodle o cargalos manualmente. Sin duplicados, siempre consistente.</p>
+      </div>
+      <div class="step">
+        <h3>Emití certificados</h3>
+        <p>Un click y se generan todos los PDFs con código QR verificable. Descargá individual o en lote.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section id="funcionalidades">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Todo lo que necesitás</div>
+      <h2 class="section-title">Funcionalidades</h2>
+      <p class="section-subtitle">Diseñado para empresas de capacitación que necesitan emitir certificados profesionales y verificables</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3>Plantillas personalizadas</h3>
+        <p>Usá tu propio diseño en Word. Definí variables como <code>{{NOMBRE}}</code>, <code>{{RUT}}</code>, <code>{{FECHA}}</code> y el sistema las completa automáticamente.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Importación desde Excel</h3>
+        <p>Cargá la nómina de alumnos desde un Excel. El sistema detecta duplicados, actualiza datos existentes y nunca crea registros repetidos.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎓</div>
+        <h3>Emisión individual y masiva</h3>
+        <p>Emití certificados uno a uno o todos de una vez. Descargá PDFs individuales o un ZIP con todos los certificados del curso.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✏️</div>
+        <h3>Edición sin restricciones</h3>
+        <p>Modificá datos del curso o del alumno cuando quieras. Los certificados ya emitidos quedan intactos, los cambios solo afectan a los nuevos.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">☁️</div>
+        <h3>Almacenamiento en la nube</h3>
+        <p>Los certificados se almacenan automáticamente en la nube. Siempre disponibles, sin preocuparte por el espacio en disco o backups.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <h3>Corrección y re-emisión</h3>
+        <p>¿Error en un certificado? Eliminalo y volvé a emitirlo con los datos corregidos. Sin complicaciones, sin trámites.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOODLE -->
+<section class="moodle-section" id="moodle">
+  <div class="container">
+    <div class="moodle-grid">
+      <div>
+        <div class="section-header">
+          <div class="section-tag">Integración nativa</div>
+          <h2 class="section-title">Conectá con Moodle</h2>
+          <p class="section-subtitle">Si usás Moodle para tus capacitaciones, QRCerts se integra directamente. Importá cursos, alumnos y calificaciones sin salir de la plataforma.</p>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li style="padding:8px 0;color:#334155;display:flex;align-items:center;gap:10px;font-size:0.95rem"><span style="color:#0f766e;font-weight:800">✓</span> Importá alumnos y notas automáticamente</li>
+          <li style="padding:8px 0;color:#334155;display:flex;align-items:center;gap:10px;font-size:0.95rem"><span style="color:#0f766e;font-weight:800">✓</span> Mapeá campos de Moodle a tu plantilla</li>
+          <li style="padding:8px 0;color:#334155;display:flex;align-items:center;gap:10px;font-size:0.95rem"><span style="color:#0f766e;font-weight:800">✓</span> Sincronizá cursos con un click</li>
+          <li style="padding:8px 0;color:#334155;display:flex;align-items:center;gap:10px;font-size:0.95rem"><span style="color:#0f766e;font-weight:800">✓</span> Campos personalizados de perfil soportados</li>
+        </ul>
+      </div>
+      <div class="moodle-visual">
+        <div class="moodle-flow">
+          <div class="moodle-flow-item">
+            <div class="moodle-flow-icon">🔗</div>
+            <div class="moodle-flow-text">
+              <h4>Conectá tu Moodle</h4>
+              <p>URL + Token API, una sola vez</p>
+            </div>
+          </div>
+          <div class="moodle-flow-item">
+            <div class="moodle-flow-icon">📚</div>
+            <div class="moodle-flow-text">
+              <h4>Seleccioná el curso</h4>
+              <p>Elegí de tu lista de cursos en Moodle</p>
+            </div>
+          </div>
+          <div class="moodle-flow-item">
+            <div class="moodle-flow-icon">🔀</div>
+            <div class="moodle-flow-text">
+              <h4>Mapeá los campos</h4>
+              <p>Campo Moodle → Variable del certificado</p>
+            </div>
+          </div>
+          <div class="moodle-flow-item">
+            <div class="moodle-flow-icon">✅</div>
+            <div class="moodle-flow-text">
+              <h4>Importá y emití</h4>
+              <p>Alumnos listos para certificar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QR VERIFICATION -->
+<section class="qr-section" id="verificacion">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-tag">Confianza verificable</div>
+      <h2 class="section-title">Verificación QR instantánea</h2>
+      <p class="section-subtitle" style="margin:0 auto">Cualquier persona puede verificar la autenticidad de un certificado escaneando el código QR. Sin apps, sin registro.</p>
+    </div>
+    <div class="qr-grid">
+      <div class="qr-card">
+        <div class="qr-card-icon">📱</div>
+        <h3>Escanear</h3>
+        <p>El receptor del certificado escanea el QR con la cámara de su celular</p>
+      </div>
+      <div class="qr-card">
+        <div class="qr-card-icon">🌐</div>
+        <h3>Verificar</h3>
+        <p>Se abre una página pública que confirma la validez del certificado al instante</p>
+      </div>
+      <div class="qr-card">
+        <div class="qr-card-icon">🛡️</div>
+        <h3>Confiar</h3>
+        <p>Datos del alumno, curso y fecha de emisión visibles. Imposible de falsificar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING TEASER -->
+<section class="pricing" id="planes">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-tag">Flexible</div>
+      <h2 class="section-title">Planes a medida</h2>
+      <p class="section-subtitle" style="margin:0 auto">Pagá solo por lo que usás. Sin contratos largos, sin letra chica.</p>
+    </div>
+    <div class="pricing-card">
+      <h3>Certificados por paquete</h3>
+      <p class="price-desc">Comprá la cantidad que necesites, usálos a tu ritmo</p>
+      <ul class="pricing-features">
+        <li>Cantidad de certificados a tu medida</li>
+        <li>Plantillas personalizadas ilimitadas</li>
+        <li>Cursos y alumnos sin límite</li>
+        <li>Verificación QR incluida</li>
+        <li>Almacenamiento en la nube</li>
+        <li>Integración con Moodle</li>
+        <li>Soporte por email</li>
+      </ul>
+      <a href="#contacto" class="btn-primary" style="width:100%;justify-content:center">Consultar precios →</a>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUSAFE -->
+<section id="docusafe" style="background:#0f172a;padding:80px 24px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,0.1) 0%,transparent 70%);border-radius:50%"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+      <div>
+        <div style="display:inline-block;padding:6px 16px;background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);border-radius:20px;font-size:0.8rem;color:#fb7185;font-weight:600;margin-bottom:16px;letter-spacing:0.5px">Nuevo producto</div>
+        <h2 style="font-size:2.2rem;font-weight:800;color:#f1f5f9;margin-bottom:16px;letter-spacing:-0.5px">DocuSafe</h2>
+        <p style="font-size:1.05rem;color:#94a3b8;margin-bottom:24px;line-height:1.8">Documentos verificables con QR y protegidos con contraseña. Ideal para actas, resoluciones, constancias y cualquier documento que necesite ser verificable y seguro.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 32px">
+          <li style="padding:8px 0;color:#cbd5e1;display:flex;align-items:center;gap:10px;font-size:0.9rem"><span style="color:#f43f5e;font-weight:800">&#9670;</span> PDF protegido con contraseña AES-256</li>
+          <li style="padding:8px 0;color:#cbd5e1;display:flex;align-items:center;gap:10px;font-size:0.9rem"><span style="color:#f43f5e;font-weight:800">&#9670;</span> QR de verificación integrado en el documento</li>
+          <li style="padding:8px 0;color:#cbd5e1;display:flex;align-items:center;gap:10px;font-size:0.9rem"><span style="color:#f43f5e;font-weight:800">&#9670;</span> Almacenamiento automático en Google Drive</li>
+          <li style="padding:8px 0;color:#cbd5e1;display:flex;align-items:center;gap:10px;font-size:0.9rem"><span style="color:#f43f5e;font-weight:800">&#9670;</span> Aplicación de escritorio, sin instalación compleja</li>
+        </ul>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="/docusafe.html" style="background:#f43f5e;color:#fff;padding:14px 28px;border-radius:10px;font-weight:700;font-size:0.95rem;transition:all .3s;display:inline-flex;align-items:center;gap:8px;text-decoration:none">Conocer DocuSafe →</a>
+          <a href="/DocuSafe-Demo.zip" download style="background:transparent;color:#fb7185;padding:14px 28px;border-radius:10px;font-weight:700;font-size:0.95rem;border:2px solid rgba(244,63,94,0.4);text-decoration:none;transition:all .3s;display:inline-flex;align-items:center;gap:8px">Descargar demo gratis</a>
+        </div>
+      </div>
+      <div style="background:rgba(30,41,59,0.6);border:1px solid #334155;border-radius:20px;padding:40px;text-align:center">
+        <div style="font-size:4rem;margin-bottom:20px">🔐</div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(15,23,42,0.5);border-radius:10px;border:1px solid #334155">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">📄</div>
+            <div style="text-align:left"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0">Tu documento Word</div><div style="font-size:0.75rem;color:#64748b">Subí el .docx que necesitás proteger</div></div>
+          </div>
+          <div style="color:#475569;font-size:1.2rem">↓</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(15,23,42,0.5);border-radius:10px;border:1px solid #334155">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(244,63,94,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">🔒</div>
+            <div style="text-align:left"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0">PDF protegido + QR</div><div style="font-size:0.75rem;color:#64748b">Cifrado AES-256 con verificación QR</div></div>
+          </div>
+          <div style="color:#475569;font-size:1.2rem">↓</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(15,23,42,0.5);border-radius:10px;border:1px solid #334155">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(20,184,166,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">☁️</div>
+            <div style="text-align:left"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0">Guardado en Drive</div><div style="font-size:0.75rem;color:#64748b">Verificable por cualquier persona</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contacto">
+  <h2>Empezá a certificar hoy</h2>
+  <p>Escribinos y te mostramos la plataforma en acción. Sin compromiso, sin tarjeta de crédito.</p>
+  <a href="https://wa.me/5493512119822?text=Hola%2C%20quiero%20info%20sobre%20QRCerts" class="btn-cta">💬 Escribinos por WhatsApp</a>
+</section>
+
+<footer>
+  <p>QRCerts — <a href="https://certificadosqr.store">certificadosqr.store</a></p>
+  <p style="margin-top:8px;font-size:0.75rem;color:#475569">Plataforma de certificación digital con verificación QR</p>
+  <p style="margin-top:12px;font-size:0.85rem"><a href="/privacy.html" style="color:#fff;margin-right:16px;text-decoration:underline">Política de Privacidad</a><a href="/terms.html" style="color:#fff;text-decoration:underline">Términos de Servicio</a></p>
+</footer>
+
+<script>
+  // Nav scroll effect
+  window.addEventListener('scroll',()=>{
+    document.getElementById('nav').classList.toggle('scrolled',window.scrollY>20)
+  })
+</script>
+</body>
+</html>
