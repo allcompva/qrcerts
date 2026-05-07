@@ -16,17 +16,20 @@ namespace QRCerts.Api.Services
     private readonly IGoogleDriveService _driveService;
     private readonly IPlantillaCertificadosService _plantillaService;
     private readonly IWebHostEnvironment _env;
+    private readonly string _qrBaseUrl;
 
     public CertificadosService(
       IQuotaService quotaService,
       IGoogleDriveService driveService,
       IPlantillaCertificadosService plantillaService,
-      IWebHostEnvironment env)
+      IWebHostEnvironment env,
+      IConfiguration configuration)
     {
       _quotaService = quotaService;
       _driveService = driveService;
       _plantillaService = plantillaService;
       _env = env;
+      _qrBaseUrl = configuration["QrBaseUrl"] ?? "https://certificadosqr.store/app/#/validar?data=";
     }
 
     public Certificado getByPk(int Id) => CertificadoDAL.getByPk(Id);
@@ -75,7 +78,7 @@ namespace QRCerts.Api.Services
         var webRootPath = _env.WebRootPath ?? Directory.GetCurrentDirectory();
         Console.WriteLine($"[Emit] Generando PDF - alumno:{alumnoId} curso:{cursoId} webRoot:{webRootPath}");
         var pdfPath = await UploadController.GeneratePdfToFile(
-          cursoId, alumnoId, _plantillaService, webRootPath, cancellationToken);
+          cursoId, alumnoId, _plantillaService, webRootPath, _qrBaseUrl, cancellationToken);
 
         if (!string.IsNullOrEmpty(pdfPath) && File.Exists(pdfPath))
         {

@@ -249,6 +249,7 @@ namespace QRCerts.Api.Controllers
             Guid courseGuid, Guid alumnoGuid,
             IPlantillaCertificadosService plantillaService,
             string webRootPath,
+            string qrBaseUrl,
             CancellationToken ct)
         {
             string templateFileName = await plantillaService.GetTemplateFileNameAsync(courseGuid);
@@ -289,7 +290,7 @@ namespace QRCerts.Api.Controllers
             System.IO.File.Copy(plantillaPath, tempDocx, overwrite: true);
 
             var qrData = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{alumnoGuid},{courseGuid}"));
-            var qrUrl = $"{_qrBaseUrl}{qrData}";
+            var qrUrl = $"{qrBaseUrl}{qrData}";
             var qrImageBytes = GenerateQrCodePng(qrUrl, 150);
 
             ReplaceQrPlaceholderWithImage(tempDocx, qrImageBytes);
