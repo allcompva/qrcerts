@@ -69,8 +69,15 @@ WORKDIR /app
 # Copiar la aplicación .NET publicada
 COPY --from=backend-build /app/publish .
 
-# Copiar el frontend compilado a wwwroot
-COPY --from=frontend-build /app/frontend/dist ./wwwroot
+# Copiar el frontend compilado a wwwroot/app
+# (Vite buildea con base: '/app/' y Program.cs sirve la SPA desde /app/)
+COPY --from=frontend-build /app/frontend/dist ./wwwroot/app
+
+# Copiar landing.html y otras paginas estaticas a wwwroot/
+# (Program.cs mapea GET / -> wwwroot/landing.html)
+COPY landing.html ./wwwroot/landing.html
+COPY presentacion.html ./wwwroot/presentacion.html
+COPY mockup-ui.html ./wwwroot/mockup-ui.html
 
 # Crear directorios necesarios
 RUN mkdir -p /app/wwwroot/uploads/images \
