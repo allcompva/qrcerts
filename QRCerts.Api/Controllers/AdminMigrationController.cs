@@ -236,7 +236,8 @@ namespace QRCerts.Api.Controllers
             return new SqlConnection(
                 new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
+                    .AddJsonFile("appsettings.json", optional: true)
+                    .AddEnvironmentVariables()
                     .Build()
                     .GetConnectionString("DefaultConnection"));
         }
