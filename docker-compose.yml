@@ -6,13 +6,13 @@ services:
   # ============================================
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: qrcerts-sqlserver-local
+    container_name: qrcerts-sqlserver
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
-      - "1434:1433"
+      - "127.0.0.1:1434:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
     restart: unless-stopped
@@ -30,15 +30,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: qrcerts-app-local
+    container_name: qrcerts-app
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QRCerts;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
       - Jwt__Key=${JWT_KEY}
       - QrBaseUrl=${QR_BASE_URL}
       - SOFFICE_PATH=/usr/bin/soffice
     ports:
-      - "${APP_PORT:-8088}:80"
+      - "127.0.0.1:${APP_PORT:-8088}:80"
     volumes:
       - uploads_data:/app/wwwroot/uploads
       - logs_data:/app/logs
@@ -46,6 +46,12 @@ services:
       sqlserver:
         condition: service_healthy
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qrcerts.rule=Host(`${DOMAIN:-localhost}`)
+      - traefik.http.routers.qrcerts.entrypoints=websecure
+      - traefik.http.routers.qrcerts.tls.certresolver=letsencrypt
+      - traefik.http.services.qrcerts.loadbalancer.server.port=80
     healthcheck:
       test: curl -f http://localhost/health || exit 1
       interval: 30s

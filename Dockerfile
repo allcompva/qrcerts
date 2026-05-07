@@ -34,6 +34,12 @@ RUN dotnet restore ./QRCerts.Api/QRCerts.Api.csproj
 # Copiar el resto del código backend
 COPY QRCerts.Api/ ./QRCerts.Api/
 
+# Garantizar que appsettings.json exista (el .gitignore lo excluye del repo).
+# Los valores reales se inyectan via env vars desde docker-compose en runtime.
+RUN if [ ! -f ./QRCerts.Api/appsettings.json ]; then \
+      cp ./QRCerts.Api/appsettings.example.json ./QRCerts.Api/appsettings.json; \
+    fi
+
 # Publicar la aplicación
 RUN dotnet publish ./QRCerts.Api/QRCerts.Api.csproj -c Release -o /app/publish --no-restore
 
